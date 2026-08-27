@@ -1,43 +1,157 @@
 @import "tailwindcss";
 
+@theme {
+  /* โทนพาสเทลของมูทูเดย์ */
+  --color-cream: #fff8f2;
+  --color-card: #ffffff;
+  --color-line: #f0e4ea;
+  --color-ink: #4a3b52;
+  --color-ink-soft: #8d7f97;
+
+  --color-blossom: #ffd9e6;
+  --color-blossom-deep: #ff8fb1;
+  --color-lilac: #e5dcff;
+  --color-lilac-deep: #a98fee;
+  --color-mint: #d6f2e4;
+  --color-mint-deep: #66c79b;
+  --color-butter: #fff0c9;
+  --color-butter-deep: #f0b429;
+  --color-sky: #daecfb;
+  --color-sky-deep: #6fb3e8;
+  --color-danger: #d16a80;
+
+  --font-sans: var(--font-mali), ui-sans-serif, system-ui, sans-serif;
+  --font-cute: var(--font-itim), var(--font-mali), ui-sans-serif, sans-serif;
+
+  --radius-blob: 2rem;
+}
+
 :root {
-  --background: #f4f5f7;
-  --surface: #ffffff;
-  --foreground: #14161c;
-  --muted: #5f6674;
-  --border: #e2e5eb;
-  --accent: #2563eb;
-  --accent-foreground: #ffffff;
-  --danger: #c2334d;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0b0d12;
-    --surface: #14171f;
-    --foreground: #e9ebf1;
-    --muted: #98a0b0;
-    --border: #262b36;
-    --accent: #5b8cff;
-    --accent-foreground: #0b0d12;
-    --danger: #ff8095;
-  }
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-surface: var(--surface);
-  --color-foreground: var(--foreground);
-  --color-muted: var(--muted);
-  --color-border: var(--border);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-danger: var(--danger);
-  --font-sans: var(--font-thai), ui-sans-serif, system-ui, sans-serif;
+  /* เว็บนี้ตั้งใจใช้ธีมสว่างอย่างเดียว เพื่อให้โทนพาสเทลคงความสดใส
+     บอก browser ไว้ด้วย จะได้ไม่ไปสลับสีของ input/scrollbar ให้เอง */
+  color-scheme: light;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background:
+    radial-gradient(1100px 520px at 12% -12%, #ffe8f2 0%, transparent 62%),
+    radial-gradient(900px 480px at 88% 4%, #e9f2ff 0%, transparent 58%),
+    radial-gradient(800px 500px at 50% 108%, #fff3d6 0%, transparent 60%),
+    var(--color-cream);
+  background-attachment: fixed;
+  color: var(--color-ink);
   -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- ลูกเล่นเคลื่อนไหว ---------- */
+
+@keyframes float-soft {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes shake-cup {
+  0%,
+  100% {
+    transform: rotate(-11deg) translateY(0);
+  }
+  20% {
+    transform: rotate(9deg) translateY(-6px);
+  }
+  40% {
+    transform: rotate(-13deg) translateY(3px);
+  }
+  60% {
+    transform: rotate(12deg) translateY(-5px);
+  }
+  80% {
+    transform: rotate(-8deg) translateY(2px);
+  }
+}
+
+@keyframes pop-in {
+  0% {
+    opacity: 0;
+    transform: translateY(14px) scale(0.94);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+.animate-float-soft {
+  animation: float-soft 4.5s ease-in-out infinite;
+}
+
+.animate-shake-cup {
+  animation: shake-cup 0.42s ease-in-out infinite;
+}
+
+.animate-pop-in {
+  animation: pop-in 0.45s cubic-bezier(0.22, 1.2, 0.36, 1) both;
+}
+
+.animate-twinkle {
+  animation: twinkle 2.4s ease-in-out infinite;
+}
+
+/* ปิดการเคลื่อนไหวให้คนที่ตั้งค่าลดแอนิเมชันไว้ในระบบ */
+@media (prefers-reduced-motion: reduce) {
+  .animate-float-soft,
+  .animate-shake-cup,
+  .animate-pop-in,
+  .animate-twinkle {
+    animation: none !important;
+  }
+}
+
+/* ---------- ไพ่ทาโรต์ ---------- */
+
+.card-scene {
+  position: relative;
+  perspective: 1200px;
+}
+
+/* ยึดกับกรอบด้วย inset แทนการใช้ height:100%
+   เพราะความสูงของปุ่มมาจาก aspect-ratio ซึ่งเปอร์เซ็นต์อ้างอิงได้ไม่แน่นอน */
+.card-inner {
+  position: absolute;
+  inset: 0;
+  transition: transform 0.65s cubic-bezier(0.3, 1.1, 0.4, 1);
+  transform-style: preserve-3d;
+}
+
+.card-inner.is-flipped {
+  transform: rotateY(180deg);
+}
+
+.card-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: 1.1rem;
+  overflow: hidden;
+}
+
+.card-face--back {
+  transform: rotateY(180deg);
 }

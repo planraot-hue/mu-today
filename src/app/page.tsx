@@ -1,60 +1,224 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
+import { CuteCharacter } from "@/components/CuteCharacter";
+import { getDailyCharm, getLuckyDay, getOutfitOfTheDay } from "@/lib/lucky-color";
 import { getSession } from "@/lib/session-cookie";
-import { logoutAction } from "./actions";
+import { formatThaiFullDate, getThaiToday } from "@/lib/thai-date";
+
+// วันที่ต้องสดใหม่ทุกครั้งที่เปิด ห้ามให้ Next.js แคชหน้านี้ไว้ข้ามวัน
+export const dynamic = "force-dynamic";
+
+const FEATURE_LINKS = [
+  {
+    href: "/horoscope",
+    emoji: "🔮",
+    title: "ดวงราศี",
+    detail: "รายวัน รายสัปดาห์ รายเดือน",
+    className: "bg-lilac",
+  },
+  {
+    href: "/siamsi",
+    emoji: "🥢",
+    title: "เสี่ยงเซียมซี",
+    detail: "วัดดัง 4 ภาค เขย่าเองได้",
+    className: "bg-mint",
+  },
+  {
+    href: "/tarot",
+    emoji: "🃏",
+    title: "ไพ่ทาโรต์",
+    detail: "เปิด 1 ใบ หรือ 3 ใบ",
+    className: "bg-sky",
+  },
+];
 
 export default async function HomePage() {
-  // ตรวจซ้ำอีกชั้นนอกเหนือจาก middleware — หน้าที่ต้องล็อกอินไม่ควรพึ่ง middleware อย่างเดียว
+  // ตรวจซ้ำอีกชั้นนอกเหนือจาก middleware
   const session = await getSession();
   if (!session) redirect("/login");
 
-  const issuedAt = session.iat
-    ? new Date(session.iat * 1000).toLocaleString("th-TH")
-    : null;
+  const today = getThaiToday();
+  const day = getLuckyDay(today.weekday);
+  const outfit = getOutfitOfTheDay(day, today.isoDate);
+  const charm = getDailyCharm(today.isoDate);
+
+  const accent = day.lucky[0]?.hex ?? day.main.hex;
 
   return (
-    <div className="min-h-dvh">
-      <header className="border-b border-border bg-surface">
-        <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 px-5 py-4">
-          <span className="font-semibold text-foreground">ระบบภายใน</span>
+    <main className="mx-auto max-w-4xl px-4 pb-8 pt-6 sm:px-5">
+      {/* ---------- สีมงคลวันนี้ ---------- */}
+      <section
+        className="rounded-blob border border-line bg-card/80 p-5 shadow-sm backdrop-blur-sm sm:p-7"
+        style={{
+          backgroundImage: `linear-gradient(160deg, ${day.main.hex}33 0%, transparent 55%)`,
+        }}
+      >
+        <p className="text-sm text-ink-soft">{formatThaiFullDate(today)}</p>
 
-          <form action={logoutAction}>
-            <button
-              type="submit"
-              className="rounded-lg border border-border px-3 py-1.5 text-sm text-muted transition hover:border-danger hover:text-danger"
+        <h1 className="mt-1 font-cute text-3xl leading-snug text-ink sm:text-4xl">
+          {day.emoji} สีมงคลของวัน{day.name}
+        </h1>
+        <p className="mt-1 text-sm text-ink-soft">{day.blessing}</p>
+
+        <div className="mt-5 grid items-center gap-5 sm:grid-cols-[minmax(0,190px)_minmax(0,1fr)]">
+          <div className="mx-auto w-40 sm:w-full">
+            <CuteCharacter
+              mainColor={day.main.hex}
+              accentColor={accent}
+              style={outfit.style}
+              className="animate-float-soft w-full"
+            />
+          </div>
+
+          <div>
+            <div
+              className="rounded-2xl border p-4"
+              style={{
+                borderColor: `${day.main.hex}80`,
+                backgroundColor: `${day.main.hex}26`,
+              }}
             >
-              ออกจากระบบ
-            </button>
-          </form>
-        </div>
-      </header>
+              <p className="text-xs text-ink-soft">สีประจำวัน{day.name}</p>
+              <p className="font-cute text-2xl text-ink">{day.main.name}</p>
+              <div className="mt-2 flex items-center gap-2">
+                <span
+                  className="h-8 w-8 rounded-full border-2 border-white shadow-sm"
+                  style={{ backgroundColor: day.main.hex }}
+                />
+                <span className="text-xs text-ink-soft">
+                  ดาวประจำวัน · {day.planet}
+                </span>
+              </div>
+            </div>
 
-      <main className="mx-auto max-w-3xl space-y-5 px-5 py-10">
-        <div>
-          <h1 className="text-2xl font-semibold text-foreground">
-            เข้าสู่ระบบเรียบร้อย
-          </h1>
-          <p className="mt-1 text-sm text-muted">
-            {issuedAt
-              ? `เข้าสู่ระบบเมื่อ ${issuedAt} · session มีอายุ 7 วัน`
-              : "session มีอายุ 7 วัน"}
+            <div className="mt-3 grid gap-3 sm:grid-cols-2">
+              <SwatchGroup
+                title="สีเสริมดวง"
+                hint="ใส่แล้วเฮง"
+                colors={day.lucky}
+              />
+              <SwatchGroup
+                title="สีกาลกิณี"
+                hint="เลี่ยงไว้ก่อน"
+                colors={day.avoid}
+                muted
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ---------- ไอเดียแต่งตัว ---------- */}
+      <section className="mt-5 rounded-blob border border-line bg-card/80 p-5 shadow-sm sm:p-7">
+        <h2 className="font-cute text-2xl text-ink">
+          👗 แต่งตัวยังไงดีวันนี้
+        </h2>
+
+        <div className="mt-3 rounded-2xl bg-blossom/40 p-4">
+          <p className="font-cute text-xl text-ink">{outfit.title}</p>
+          <p className="mt-1 text-sm leading-relaxed text-ink-soft">
+            {outfit.detail}
           </p>
+
+          <ul className="mt-3 flex flex-wrap gap-2">
+            {outfit.items.map((item) => (
+              <li
+                key={item}
+                className="rounded-full bg-card px-3 py-1.5 text-xs text-ink shadow-sm"
+              >
+                {item}
+              </li>
+            ))}
+          </ul>
         </div>
 
-        {/*
-          จุดสำหรับเติมฟีเจอร์ต่อไป
-          ทุกหน้าที่สร้างเพิ่มใน src/app/ จะถูก middleware กันให้อัตโนมัติอยู่แล้ว
-          ยกเว้น /login — ไม่ต้องเขียนโค้ดตรวจสิทธิ์ซ้ำ (แต่แนะนำให้เรียก getSession()
-          ในหน้านั้นด้วย เหมือนที่ทำในไฟล์นี้)
-        */}
-        <section className="rounded-2xl border border-dashed border-border bg-surface p-8 text-center">
-          <p className="text-sm text-muted">
-            พื้นที่สำหรับฟีเจอร์ถัดไป — เพิ่มหน้าใหม่ได้ที่{" "}
-            <code className="rounded bg-background px-1.5 py-0.5 text-xs text-foreground">
-              src/app/
-            </code>
-          </p>
-        </section>
-      </main>
+        <div className="mt-3 grid gap-3 sm:grid-cols-3">
+          <CharmCard emoji="🍀" label="ของนำโชค" value={charm.charm} />
+          <CharmCard emoji="🧭" label="ทิศมงคล" value={charm.direction} />
+          <CharmCard
+            emoji="🔢"
+            label="เลขนำโชค"
+            value={String(charm.luckyNumber)}
+          />
+        </div>
+      </section>
+
+      {/* ---------- ทางไปฟีเจอร์อื่น ---------- */}
+      <section className="mt-5 grid gap-3 sm:grid-cols-3">
+        {FEATURE_LINKS.map((feature) => (
+          <Link
+            key={feature.href}
+            href={feature.href}
+            className={`group rounded-blob border border-line ${feature.className} p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-md`}
+          >
+            <span className="text-3xl" aria-hidden>
+              {feature.emoji}
+            </span>
+            <p className="mt-2 font-cute text-xl text-ink">{feature.title}</p>
+            <p className="text-xs text-ink-soft">{feature.detail}</p>
+            <span className="mt-3 inline-block text-sm text-ink transition group-hover:translate-x-1">
+              เข้าไปดู →
+            </span>
+          </Link>
+        ))}
+      </section>
+    </main>
+  );
+}
+
+function SwatchGroup({
+  title,
+  hint,
+  colors,
+  muted,
+}: {
+  title: string;
+  hint: string;
+  colors: { name: string; hex: string }[];
+  muted?: boolean;
+}) {
+  return (
+    <div className="rounded-2xl border border-line bg-card p-4">
+      <p className="text-sm font-semibold text-ink">
+        {title}{" "}
+        <span className="font-normal text-xs text-ink-soft">· {hint}</span>
+      </p>
+      <ul className="mt-2 space-y-1.5">
+        {colors.map((color) => (
+          <li key={color.name} className="flex items-center gap-2">
+            <span
+              className={`h-5 w-5 rounded-full border border-line ${
+                muted ? "opacity-55" : ""
+              }`}
+              style={{ backgroundColor: color.hex }}
+            />
+            <span
+              className={`text-xs ${muted ? "text-ink-soft line-through" : "text-ink"}`}
+            >
+              {color.name}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function CharmCard({
+  emoji,
+  label,
+  value,
+}: {
+  emoji: string;
+  label: string;
+  value: string;
+}) {
+  return (
+    <div className="rounded-2xl border border-line bg-butter/50 p-4">
+      <p className="text-xs text-ink-soft">
+        <span aria-hidden>{emoji}</span> {label}
+      </p>
+      <p className="mt-0.5 text-sm font-medium leading-snug text-ink">{value}</p>
     </div>
   );
 }

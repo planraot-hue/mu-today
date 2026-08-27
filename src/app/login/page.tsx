@@ -9,11 +9,14 @@ export default async function LoginPage({
 
   return (
     <main className="flex min-h-dvh items-center justify-center px-4 py-10">
-      <div className="w-full max-w-sm rounded-2xl border border-border bg-surface p-7 shadow-sm">
-        <div className="mb-6 space-y-1">
-          <h1 className="text-xl font-semibold text-foreground">เข้าสู่ระบบ</h1>
-          <p className="text-sm text-muted">
-            หน้านี้เปิดให้เฉพาะผู้ที่มีรหัสผ่านเท่านั้น
+      <div className="w-full max-w-sm rounded-blob border border-line bg-card/85 p-7 shadow-sm backdrop-blur-sm">
+        <div className="mb-6 text-center">
+          <p className="animate-float-soft text-5xl" aria-hidden>
+            🔮
+          </p>
+          <h1 className="mt-2 font-cute text-3xl text-ink">มูทูเดย์</h1>
+          <p className="mt-1 text-sm text-ink-soft">
+            ดูดวงประจำวัน · ใส่รหัสผ่านเพื่อเข้าใช้งาน
           </p>
         </div>
 
