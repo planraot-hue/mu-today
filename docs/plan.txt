@@ -1,0 +1,34 @@
+#Feature
+- Login แบบง่าย ด้วย รหัสแบบ fixed
+  [DONE] รหัสอ่านจาก env var APP_PASSWORD
+  [DONE] ตรวจรหัสฝั่ง server เท่านั้น (Server Action) รหัสไม่เคยถูกส่งไป browser
+  [DONE] เทียบรหัสแบบ timing-safe (SHA-256 + timingSafeEqual)
+  [DONE] จำ session ด้วย JWT ใน cookie httpOnly อายุ 7 วัน
+  [DONE] middleware กันทุกหน้ายกเว้น /login + ตรวจซ้ำใน Server Component
+  [DONE] rate limit เดารหัส 5 ครั้ง / 5 นาที (เก็บใน memory ดูข้อจำกัดใน README)
+  [DONE] กัน open redirect ที่พารามิเตอร์ next
+  [DONE] หน้า logout
+
+#deployment
+- ใช้ vercel + NextJS
+  [DONE] Next.js 15 App Router + TypeScript + Tailwind CSS v4
+  [DONE] ไม่มีฐานข้อมูล ไม่มี service ภายนอก — deploy ได้ทันที
+  [DONE] dependency นอกเหนือจาก template มีตัวเดียวคือ jose (เซ็น JWT)
+  ต้องตั้ง env 2 ตัวใน Vercel: APP_PASSWORD, SESSION_SECRET
+  ขั้นตอน deploy ทั้งหมดอยู่ใน README.md
+
+#โครงสร้างไฟล์
+  src/middleware.ts           กันเส้นทาง
+  src/lib/session.ts          สร้าง/ตรวจ JWT (ใช้ได้ทั้ง Edge และ Node)
+  src/lib/session-cookie.ts   อ่าน/เขียน/ลบ session cookie
+  src/lib/auth.ts             เทียบรหัสผ่าน + rate limit
+  src/app/actions.ts          Server Action: login / logout
+  src/app/page.tsx            หน้าหลัก (ต้องล็อกอิน)
+  src/app/login/              หน้า login + ฟอร์ม
+
+#TODO ต่อไป
+- ยังไม่ได้กำหนดว่าหลัง login แล้วเว็บทำอะไร
+  ตอนนี้เป็นหน้า dashboard เปล่าที่พร้อมให้เติมฟีเจอร์
+- เพิ่มหน้าใหม่: สร้างโฟลเดอร์ใน src/app/ ได้เลย middleware กันให้อัตโนมัติ
+- ยังไม่มีที่เก็บข้อมูล ถ้าฟีเจอร์ต่อไปต้องเก็บข้อมูล ค่อยเลือกทีหลัง
+  (localStorage ถ้าใช้คนเดียว / Vercel Blob หรือ Neon Postgres ถ้าต้องการข้อมูลกลาง)

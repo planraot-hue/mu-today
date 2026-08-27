@@ -1,0 +1,15 @@
+node_modules/
+.next/
+out/
+build/
+next-env.d.ts
+
+# ห้าม commit ค่า env จริงเด็ดขาด — รหัสผ่านอยู่ในนี้
+.env
+.env*.local
+
+.vercel
+*.tsbuildinfo
+
+.DS_Store
+Thumbs.db
