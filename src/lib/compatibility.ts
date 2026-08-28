@@ -3,7 +3,8 @@ import {
   getClashAnimal,
   type ChineseAnimal,
 } from "@/lib/chinese";
-import { getDayProfile, getWeekdayOf, type BirthDate } from "@/lib/birth";
+import { getWeekdayOf, type BirthDate } from "@/lib/birth";
+import { getBhumOf, getPlanetOfWeekday } from "@/lib/thaksa";
 import { getZodiacByDate, type Zodiac } from "@/lib/zodiac";
 import { THAI_DAY_NAMES } from "@/lib/thai-date";
 
@@ -36,41 +37,74 @@ export type CompatResult = {
 /* ---------------- ด้านที่ 1: วันเกิด ---------------- */
 
 /**
- * คู่ธาตุตามวันเกิดแบบไทย ใช้ matchDays ที่ระบุไว้ในโปรไฟล์แต่ละวัน
- * ถ้าอยู่ในลิสต์ของกันและกันถือว่าเข้ากันมาก
+ * คู่สมพงศ์ตามวันเกิด — ใช้วิธีของตำราทักษาปกรณ์
+ *
+ * ตำราให้ดูว่าดาวประจำวันเกิดของอีกฝ่ายตกอยู่ในภูมิใดของเรา
+ * ถ้าตกภูมิศรี เดช หรือมนตรี ถือว่าส่งเสริมกัน
+ * ถ้าตกภูมิกาลกิณี ถือว่าเป็นคู่ที่ต้องระวัง
+ *
+ * ข้อสังเกตของระบบนี้: กาลกิณีเป็นคนละทิศทางกันเสมอ
+ * ถ้า B เป็นกาลกิณีของ A แล้ว A จะเป็นภูมิอายุของ B ไม่ใช่กาลกิณีกลับ
+ * จึงไม่มีคู่ไหนที่เป็นกาลกิณีของกันและกันทั้งสองฝ่าย
  */
 function scoreByDay(a: BirthDate, b: BirthDate): CompatAspect {
   const dayA = getWeekdayOf(a);
   const dayB = getWeekdayOf(b);
-  const profileA = getDayProfile(dayA);
-  const profileB = getDayProfile(dayB);
+  const planetA = getPlanetOfWeekday(dayA);
+  const planetB = getPlanetOfWeekday(dayB);
 
-  const aLikesB = profileA.matchDays.includes(dayB);
-  const bLikesA = profileB.matchDays.includes(dayA);
+  // B อยู่ในภูมิใดของ A และกลับกัน
+  const bhumOfBForA = getBhumOf(planetA, planetB);
+  const bhumOfAForB = getBhumOf(planetB, planetA);
+
+  const nameA = `วัน${THAI_DAY_NAMES[dayA]}`;
+  const nameB = `วัน${THAI_DAY_NAMES[dayB]}`;
+  const relation = `ฝ่ายที่เกิด${nameB}ตกภูมิ${bhumOfBForA.name}ของฝ่ายที่เกิด${nameA} และฝ่ายที่เกิด${nameA}ตกภูมิ${bhumOfAForB.name}ของอีกฝ่าย`;
+
+  const isGood = (key: string) =>
+    key === "si" || key === "det" || key === "montri";
 
   let score: number;
   let headline: string;
   let detail: string;
 
-  if (aLikesB && bLikesA) {
+  if (bhumOfBForA.key === "kalakini" || bhumOfAForB.key === "kalakini") {
+    const badSide =
+      bhumOfBForA.key === "kalakini"
+        ? `คนเกิด${nameB}เป็นกาลกิณีของคนเกิด${nameA}`
+        : `คนเกิด${nameA}เป็นกาลกิณีของคนเกิด${nameB}`;
+    score = 45;
+    headline = "มีฝ่ายหนึ่งตกภูมิกาลกิณี";
+    detail = `${badSide} ตามตำราทักษาถือว่าเป็นคู่ที่ต้องใช้ความเข้าใจมากเป็นพิเศษ มักมีเรื่องกระทบกระทั่งจากเรื่องเล็กน้อย ไม่ได้แปลว่าอยู่ด้วยกันไม่ได้ แต่ต้องระวังคำพูดและอย่าเอาชนะกัน`;
+  } else if (isGood(bhumOfBForA.key) && isGood(bhumOfAForB.key)) {
     score = 95;
-    headline = "ถูกโฉลกกันทั้งสองฝ่าย";
-    detail = `คนเกิดวัน${THAI_DAY_NAMES[dayA]}กับวัน${THAI_DAY_NAMES[dayB]}เข้ากันได้ดีมากตามตำราไทย ต่างฝ่ายต่างเติมเต็มสิ่งที่อีกคนขาด อยู่ด้วยกันแล้วสบายใจโดยไม่ต้องพยายาม`;
-  } else if (aLikesB || bLikesA) {
-    score = 78;
-    headline = "เข้ากันได้ดี ฝ่ายหนึ่งเป็นคนเติม";
-    detail = `มีฝ่ายหนึ่งที่ปรับเข้าหาอีกฝ่ายได้ง่ายกว่า ความสัมพันธ์จะราบรื่นถ้าอีกคนรู้ตัวและตอบแทนความใส่ใจนั้นกลับไปบ้าง`;
+    headline = "ส่งเสริมกันทั้งสองฝ่าย";
+    detail = `${relation} ทั้งสองภูมิเป็นภูมิมงคลที่ตำราแนะนำ ถือเป็นคู่ที่หนุนกันเต็มที่ อยู่ด้วยกันแล้วต่างฝ่ายต่างเจริญ`;
+  } else if (isGood(bhumOfBForA.key) || isGood(bhumOfAForB.key)) {
+    const goodSide = isGood(bhumOfBForA.key)
+      ? `คนเกิด${nameB}เป็นภูมิ${bhumOfBForA.name}ให้คนเกิด${nameA}`
+      : `คนเกิด${nameA}เป็นภูมิ${bhumOfAForB.name}ให้คนเกิด${nameB}`;
+    score = 82;
+    headline = "มีฝ่ายหนึ่งเป็นคนนำโชคให้";
+    detail = `${goodSide} ฝ่ายนั้นจะเป็นคนพาความดีเข้ามาในชีวิตอีกฝ่าย ความสัมพันธ์จะราบรื่นถ้าอีกคนรู้คุณค่าและตอบแทนกลับไปบ้าง`;
   } else if (dayA === dayB) {
-    score = 70;
-    headline = "วันเกิดเดียวกัน เข้าใจกันง่าย";
-    detail = `เกิดวัน${THAI_DAY_NAMES[dayA]}เหมือนกัน นิสัยจึงคล้ายกันมาก เข้าใจกันง่ายแต่ก็มีจุดอ่อนชุดเดียวกัน ต้องช่วยกันเตือนในเรื่องที่ทั้งคู่พลาดเหมือนกัน`;
+    score = 72;
+    headline = "วันเกิดเดียวกัน ต่างเป็นบริวารของกัน";
+    detail = `เกิด${nameA}เหมือนกัน ดาวประจำวันจึงตกภูมิบริวารของกันและกัน เข้าใจกันง่ายเพราะนิสัยคล้าย แต่ก็มีจุดอ่อนชุดเดียวกัน ต้องช่วยกันเตือน`;
   } else {
-    score = 58;
-    headline = "ต่างกันพอสมควร ต้องปรับเข้าหากัน";
-    detail = `คนเกิดวัน${THAI_DAY_NAMES[dayA]}กับวัน${THAI_DAY_NAMES[dayB]}มองโลกคนละมุม ไม่ได้แปลว่าไปด้วยกันไม่ได้ แต่ต้องคุยกันเยอะกว่าคู่อื่นเพื่อไม่ให้เข้าใจผิด`;
+    score = 68;
+    headline = "อยู่ในเกณฑ์ปกติ";
+    detail = `${relation} ทั้งสองภูมิเป็นภูมิที่ไม่ได้เด่นและไม่ได้เสีย ถือเป็นคู่ที่ไปกันได้เรื่อยๆ ขึ้นอยู่กับการปรับตัวมากกว่าดวง`;
   }
 
-  return { key: "day", title: "วันเกิด", emoji: "📅", score, headline, detail };
+  return {
+    key: "day",
+    title: "วันเกิด (ทักษาปกรณ์)",
+    emoji: "📅",
+    score,
+    headline,
+    detail,
+  };
 }
 
 /* ---------------- ด้านที่ 2: ราศีและธาตุ ---------------- */

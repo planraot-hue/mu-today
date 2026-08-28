@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Itim, Mali } from "next/font/google";
 import { SiteHeader } from "@/components/SiteHeader";
-import { getCurrentUser } from "@/lib/supabase/server";
+import { getViewer } from "@/lib/viewer";
 import "./globals.css";
 
 const mali = Mali({
@@ -34,27 +34,29 @@ export const viewport: Viewport = {
 export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  // อ่านผู้ใช้ไว้โชว์อีเมลบนหัวเว็บ
-  // ถ้ายังไม่ได้ตั้งค่า Supabase จะ throw ตรงนี้ — กลืนไว้แล้วให้หน้า login
-  // เป็นคนแสดงคำแนะนำการตั้งค่าแทน
-  let email: string | null = null;
-  try {
-    const user = await getCurrentUser();
-    email = user?.email ?? null;
-  } catch (error) {
-    console.error(error);
-  }
+  // อ่านสถานะผู้เข้าชมไว้โชว์บนหัวเว็บ
+  // getViewer กลืน error ของ Supabase ไว้แล้ว จึงไม่ต้อง try/catch ซ้ำ
+  const viewer = await getViewer();
 
   return (
     <html lang="th" className={`${mali.variable} ${itim.variable}`}>
       <body className="min-h-dvh font-sans antialiased">
-        <SiteHeader email={email} />
+        <SiteHeader
+          email={viewer.user?.email ?? null}
+          isGuest={viewer.isGuest}
+        />
         {children}
         <footer className="mx-auto max-w-4xl px-5 pb-10 pt-4 text-center text-xs text-ink-soft">
           <p>
             มูทูเดย์ · คำทำนายทั้งหมดจัดทำขึ้นเพื่อความบันเทิง
             โปรดใช้วิจารณญาณในการรับชม
           </p>
+          <a
+            href="/sources"
+            className="mt-1 inline-block underline underline-offset-2 hover:text-ink"
+          >
+            📚 ดูที่มาของข้อมูลแต่ละฟีเจอร์
+          </a>
         </footer>
       </body>
     </html>

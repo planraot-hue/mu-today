@@ -125,23 +125,92 @@ export function BirthFortune({ todayKey }: { todayKey: string }) {
           </ul>
         </div>
 
-        <div className="mt-3 rounded-2xl border border-line bg-card p-4">
-          <p className="text-sm font-semibold text-ink">💞 มักเข้ากับคนเกิดวัน</p>
-          <p className="mt-1 text-sm text-ink-soft">
-            {dayProfile.matchDays.map((day) => `วัน${dayName(day)}`).join(" · ")}
-          </p>
-          <Link
-            href="/love"
-            className="mt-2 inline-block text-xs text-blossom-deep underline underline-offset-2"
-          >
-            ลองดูดวงสมพงศ์กับคนที่คิดถึง →
-          </Link>
-        </div>
-
         <p className="mt-3 rounded-2xl border border-dashed border-blossom-deep/40 bg-blossom/25 p-4 text-sm text-ink">
           <span className="font-semibold">คำแนะนำ · </span>
           {dayProfile.advice}
         </p>
+      </section>
+
+      {/* ผูกทักษาเต็ม — ส่วนนี้คำนวณจากตำราทักษาปกรณ์ทั้งหมด */}
+      <section className="mt-4 rounded-blob border border-line bg-card/85 p-5 shadow-sm sm:p-7">
+        <h2 className="font-cute text-2xl text-ink">📜 ผูกทักษาของคุณ</h2>
+        <p className="text-xs leading-relaxed text-ink-soft">
+          ตามตำราทักษาปกรณ์ เริ่มนับภูมิบริวารที่ดาวประจำวันเกิด
+          แล้วไล่ตามลำดับทักษา ๑ ๒ ๓ ๔ ๗ ๕ ๘ ๖ จนครบแปดภูมิ
+          ตารางนี้คือที่มาของสีมงคลและสีกาลกิณีทั้งหมดในเว็บ
+        </p>
+
+        <div className="mt-3 overflow-x-auto">
+          <table className="w-full min-w-[420px] text-left text-sm">
+            <thead>
+              <tr className="border-b border-line text-xs text-ink-soft">
+                <th className="py-2 pr-2 font-medium">ภูมิ</th>
+                <th className="py-2 pr-2 font-medium">ดาว</th>
+                <th className="py-2 pr-2 font-medium">สี</th>
+                <th className="py-2 font-medium">ดูแลเรื่อง</th>
+              </tr>
+            </thead>
+            <tbody>
+              {luckyDay.thaksa.map((entry) => (
+                <tr
+                  key={entry.bhum.key}
+                  className={`border-b border-line/60 align-top ${
+                    entry.bhum.key === "kalakini"
+                      ? "bg-blossom/25"
+                      : entry.bhum.highlighted
+                        ? "bg-mint/25"
+                        : ""
+                  }`}
+                >
+                  <td className="py-2 pr-2">
+                    <span className="font-semibold text-ink">
+                      {entry.bhum.name}
+                    </span>
+                    {entry.bhum.highlighted && (
+                      <span className="ml-1 text-[10px] text-mint-deep">
+                        แนะนำ
+                      </span>
+                    )}
+                    {!entry.bhum.auspicious && (
+                      <span className="ml-1 text-[10px] text-danger">ห้าม</span>
+                    )}
+                  </td>
+                  <td className="py-2 pr-2 text-xs text-ink">
+                    {entry.planet.name}
+                    <span className="text-ink-soft"> ({entry.planet.number})</span>
+                  </td>
+                  <td className="py-2 pr-2">
+                    <span className="flex items-center gap-1.5">
+                      <span
+                        className="h-4 w-4 shrink-0 rounded-full border border-line"
+                        style={{ backgroundColor: entry.planet.colors[0].hex }}
+                      />
+                      <span className="text-xs text-ink">
+                        {entry.planet.colors[0].name}
+                      </span>
+                    </span>
+                  </td>
+                  <td className="py-2 text-xs leading-snug text-ink-soft">
+                    {entry.bhum.governs}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <p className="mt-3 text-xs leading-relaxed text-ink-soft">
+          หมายเหตุ: ตำราแยกคนเกิด<strong>วันพุธกลางคืน</strong> (หลัง 18.00 น.)
+          ให้อยู่ใต้พระราหู ไม่ใช่พระพุธ ซึ่งจะได้ผูกทักษาคนละชุด
+          เว็บนี้ยังคำนวณให้เฉพาะวันพุธกลางวัน
+        </p>
+
+        <Link
+          href="/love"
+          className="mt-4 inline-block rounded-full px-5 py-2.5 text-sm font-semibold grad-pink"
+        >
+          ดูดวงสมพงศ์ด้วยทักษา →
+        </Link>
       </section>
 
       {/* สีมงคลประจำวันเกิด */}

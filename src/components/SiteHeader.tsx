@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { signOutAction } from "@/app/actions";
+import { exitGuestAction, signOutAction } from "@/app/actions";
 
 const NAV_ITEMS = [
   { href: "/", label: "สีมงคล", emoji: "🎨", grad: "grad-pink" },
@@ -15,7 +15,13 @@ const NAV_ITEMS = [
   { href: "/phrom-yan", label: "พรหมญาณ", emoji: "🔯", grad: "grad-violet" },
 ];
 
-export function SiteHeader({ email }: { email: string | null }) {
+export function SiteHeader({
+  email,
+  isGuest,
+}: {
+  email: string | null;
+  isGuest: boolean;
+}) {
   const pathname = usePathname();
 
   // หน้าเกี่ยวกับการเข้าสู่ระบบไม่ควรเห็นเมนูหรือปุ่มออกจากระบบ
@@ -34,23 +40,41 @@ export function SiteHeader({ email }: { email: string | null }) {
         </Link>
 
         <div className="flex min-w-0 items-center gap-2">
-          {email && (
-            <span
-              className="hidden max-w-[180px] truncate text-xs text-ink-soft sm:inline"
-              title={email}
-            >
-              {email}
-            </span>
-          )}
+          {isGuest ? (
+            <>
+              <span className="hidden rounded-full bg-butter/70 px-3 py-1 text-xs text-ink sm:inline">
+                👀 โหมดผู้เยี่ยมชม
+              </span>
+              <form action={exitGuestAction}>
+                <button
+                  type="submit"
+                  className="shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold grad-pink"
+                >
+                  เข้าสู่ระบบ
+                </button>
+              </form>
+            </>
+          ) : (
+            <>
+              {email && (
+                <span
+                  className="hidden max-w-[180px] truncate text-xs text-ink-soft sm:inline"
+                  title={email}
+                >
+                  {email}
+                </span>
+              )}
 
-          <form action={signOutAction}>
-            <button
-              type="submit"
-              className="shrink-0 rounded-full border border-line bg-card/70 px-3 py-1.5 text-xs text-ink-soft transition hover:border-blossom-deep hover:text-blossom-deep"
-            >
-              ออกจากระบบ
-            </button>
-          </form>
+              <form action={signOutAction}>
+                <button
+                  type="submit"
+                  className="shrink-0 rounded-full border border-line bg-card/70 px-3 py-1.5 text-xs text-ink-soft transition hover:border-blossom-deep hover:text-blossom-deep"
+                >
+                  ออกจากระบบ
+                </button>
+              </form>
+            </>
+          )}
         </div>
       </div>
 

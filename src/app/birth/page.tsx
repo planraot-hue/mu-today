@@ -1,13 +1,13 @@
 import { redirect } from "next/navigation";
-import { getCurrentUser } from "@/lib/supabase/server";
+import { getViewer } from "@/lib/viewer";
 import { getThaiToday } from "@/lib/thai-date";
 import { BirthFortune } from "./BirthFortune";
 
 export const dynamic = "force-dynamic";
 
 export default async function BirthPage() {
-  const user = await getCurrentUser();
-  if (!user) redirect("/login");
+  const viewer = await getViewer();
+  if (!viewer.canView) redirect("/login");
 
   const today = getThaiToday();
 

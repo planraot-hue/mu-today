@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getCurrentUser } from "@/lib/supabase/server";
+import { getViewer } from "@/lib/viewer";
 import {
   formatThaiFullDate,
   formatThaiMonth,
@@ -11,8 +11,8 @@ import { HoroscopeExplorer } from "./HoroscopeExplorer";
 export const dynamic = "force-dynamic";
 
 export default async function HoroscopePage() {
-  const user = await getCurrentUser();
-  if (!user) redirect("/login");
+  const viewer = await getViewer();
+  if (!viewer.canView) redirect("/login");
 
   const today = getThaiToday();
 

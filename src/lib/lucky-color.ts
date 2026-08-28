@@ -1,19 +1,28 @@
 import { createRng, pick } from "@/lib/random";
+import {
+  getHighlightedColors,
+  getKalakini,
+  getPlanetOfWeekday,
+  getThaksaChart,
+  PLANETS,
+  type ColorSwatch,
+  type PlanetKey,
+  type ThaksaEntry,
+} from "@/lib/thaksa";
+
+export type { ColorSwatch };
 
 /**
- * สีมงคลประจำวัน อิงคติความเชื่อโหราศาสตร์ไทย
- * ค่าสี hex ปรับให้เป็นโทนพาสเทลเพื่อให้เข้ากับธีมเว็บและใช้ระบายตัวการ์ตูนได้สวย
+ * สีมงคลประจำวัน
  *
- * หมายเหตุ: ตำราแต่ละสำนักระบุไม่ตรงกันเป๊ะ ชุดนี้ใช้ฉบับที่นิยมอ้างถึงมากที่สุด
+ * ที่มา: คำนวณจากระบบทักษาปกรณ์ใน thaksa.ts ทั้งหมด ไม่ได้ฮาร์ดโค้ดคำตอบไว้
+ * - สีประจำวัน = สีของดาวประจำวันเกิด (ภูมิบริวาร)
+ * - สีเสริมดวง = สีของภูมิเดช ศรี และมนตรี ซึ่งตำราแนะนำให้ใช้เสริมดวง
+ * - สีกาลกิณี = สีของภูมิกาลกิณี ซึ่งตำราให้หลีกเลี่ยง
  */
 
-export type ColorSwatch = {
-  name: string;
-  hex: string;
-};
-
 export type OutfitIdea = {
-  /** สไตล์การแต่งตัว — ใช้เลือกท่าทาง/ชุดของตัวการ์ตูนด้วย */
+  /** สไตล์การแต่งตัว — ใช้เลือกทรงชุดของตัวการ์ตูนด้วย */
   style: "dress" | "casual" | "hoodie";
   title: string;
   detail: string;
@@ -25,32 +34,28 @@ export type LuckyDay = {
   name: string;
   emoji: string;
   planet: string;
-  /** สีประจำวัน — สีเด่นที่สุด ใช้เป็นสีเสื้อของตัวการ์ตูน */
+  planetKey: PlanetKey;
+  /** ผูกทักษาเต็มทั้งแปดภูมิ สำหรับแสดงตารางให้ผู้ใช้เห็นที่มา */
+  thaksa: ThaksaEntry[];
   main: ColorSwatch;
-  /** สีเสริมดวง */
   lucky: ColorSwatch[];
-  /** สีกาลกิณี ควรเลี่ยง */
   avoid: ColorSwatch[];
   blessing: string;
   outfits: OutfitIdea[];
 };
 
-export const LUCKY_DAYS: LuckyDay[] = [
+/** ส่วนที่เขียนขึ้นเอง — คำอวยพรและไอเดียแต่งตัว ไม่ได้มาจากตำรา */
+type DayMeta = {
+  name: string;
+  emoji: string;
+  blessing: string;
+  outfits: OutfitIdea[];
+};
+
+const DAY_META: DayMeta[] = [
   {
-    weekday: 0,
     name: "อาทิตย์",
     emoji: "☀️",
-    planet: "พระอาทิตย์",
-    main: { name: "แดงพาสเทล", hex: "#FF9AA8" },
-    lucky: [
-      { name: "ชมพูหวาน", hex: "#FFC2D1" },
-      { name: "ส้มพีช", hex: "#FFC49B" },
-      { name: "เขียวมิ้นต์", hex: "#B7E4C7" },
-    ],
-    avoid: [
-      { name: "ฟ้า", hex: "#A8D0F0" },
-      { name: "น้ำเงิน", hex: "#8CA9E0" },
-    ],
     blessing: "วันแห่งอำนาจและความมั่นใจ เหมาะกับการเริ่มต้นสิ่งใหม่",
     outfits: [
       {
@@ -77,17 +82,8 @@ export const LUCKY_DAYS: LuckyDay[] = [
     ],
   },
   {
-    weekday: 1,
     name: "จันทร์",
     emoji: "🌙",
-    planet: "พระจันทร์",
-    main: { name: "เหลืองครีม", hex: "#FFE08A" },
-    lucky: [
-      { name: "ขาวนวล", hex: "#FFF6E5" },
-      { name: "เหลืองมะนาว", hex: "#FFEFA8" },
-      { name: "ครีมทอง", hex: "#F5DFA8" },
-    ],
-    avoid: [{ name: "แดง", hex: "#FF9AA8" }],
     blessing: "วันแห่งเสน่ห์และมิตรไมตรี พูดจาสิ่งใดคนมักเอ็นดู",
     outfits: [
       {
@@ -95,7 +91,11 @@ export const LUCKY_DAYS: LuckyDay[] = [
         title: "เสื้อเชิ้ตครีม + กระโปรงยาว",
         detail:
           "โทนนวลตาช่วยขับผิวให้ดูสว่าง เหมาะกับวันที่ต้องเจอผู้คนหรือเข้าประชุม",
-        items: ["เสื้อเชิ้ตสีครีม", "กระโปรงยาวสีเหลืองอ่อน", "รองเท้าหนังสีน้ำตาลอ่อน"],
+        items: [
+          "เสื้อเชิ้ตสีครีม",
+          "กระโปรงยาวสีเหลืองอ่อน",
+          "รองเท้าหนังสีน้ำตาลอ่อน",
+        ],
       },
       {
         style: "dress",
@@ -107,26 +107,15 @@ export const LUCKY_DAYS: LuckyDay[] = [
       {
         style: "hoodie",
         title: "สเวตเตอร์นวล นุ่มสบาย",
-        detail: "วันจันทร์ที่ยังตื่นไม่เต็มที่ สเวตเตอร์โทนนวลช่วยให้ดูสุภาพแต่ยังสบายตัว",
+        detail:
+          "วันจันทร์ที่ยังตื่นไม่เต็มที่ สเวตเตอร์โทนนวลช่วยให้ดูสุภาพแต่ยังสบายตัว",
         items: ["สเวตเตอร์สีขาวนวล", "กางเกงวอร์มสีครีม", "ผ้าพันคอสีเหลืองอ่อน"],
       },
     ],
   },
   {
-    weekday: 2,
     name: "อังคาร",
     emoji: "🔥",
-    planet: "พระอังคาร",
-    main: { name: "ชมพูพาสเทล", hex: "#FFB3C6" },
-    lucky: [
-      { name: "ม่วงลาเวนเดอร์", hex: "#C9B6F5" },
-      { name: "ชมพูกุหลาบ", hex: "#FFA5BC" },
-      { name: "แดงอ่อน", hex: "#FF9AA8" },
-    ],
-    avoid: [
-      { name: "เหลือง", hex: "#FFE08A" },
-      { name: "ครีม", hex: "#F5DFA8" },
-    ],
     blessing: "วันแห่งพลังและความกล้า เหมาะกับการตัดสินใจเรื่องค้างคา",
     outfits: [
       {
@@ -151,17 +140,8 @@ export const LUCKY_DAYS: LuckyDay[] = [
     ],
   },
   {
-    weekday: 3,
     name: "พุธ",
     emoji: "🌿",
-    planet: "พระพุธ",
-    main: { name: "เขียวมิ้นต์", hex: "#A8E0C0" },
-    lucky: [
-      { name: "เขียวอ่อน", hex: "#C8EFD4" },
-      { name: "ส้มพีช", hex: "#FFC49B" },
-      { name: "เทาอ่อน", hex: "#D8DCE3" },
-    ],
-    avoid: [{ name: "ชมพู", hex: "#FFB3C6" }],
     blessing: "วันแห่งการเจรจาและการเรียนรู้ พูดคุยเรื่องใดมักราบรื่น",
     outfits: [
       {
@@ -186,20 +166,8 @@ export const LUCKY_DAYS: LuckyDay[] = [
     ],
   },
   {
-    weekday: 4,
     name: "พฤหัสบดี",
     emoji: "🍊",
-    planet: "พระพฤหัสบดี",
-    main: { name: "ส้มพาสเทล", hex: "#FFBE85" },
-    lucky: [
-      { name: "เหลืองทอง", hex: "#FFE08A" },
-      { name: "ส้มพีช", hex: "#FFC49B" },
-      { name: "น้ำตาลอ่อน", hex: "#E0C4A8" },
-    ],
-    avoid: [
-      { name: "ม่วง", hex: "#C9B6F5" },
-      { name: "ดำ", hex: "#7A7280" },
-    ],
     blessing: "วันแห่งครูบาอาจารย์และสติปัญญา เหมาะกับการเรียนและขอคำปรึกษา",
     outfits: [
       {
@@ -224,20 +192,8 @@ export const LUCKY_DAYS: LuckyDay[] = [
     ],
   },
   {
-    weekday: 5,
     name: "ศุกร์",
     emoji: "💙",
-    planet: "พระศุกร์",
-    main: { name: "ฟ้าพาสเทล", hex: "#A8D5F0" },
-    lucky: [
-      { name: "ฟ้าอ่อน", hex: "#CDE8F7" },
-      { name: "ขาวนวล", hex: "#FFF6E5" },
-      { name: "ครีม", hex: "#F5DFA8" },
-    ],
-    avoid: [
-      { name: "ดำ", hex: "#7A7280" },
-      { name: "เทาเข้ม", hex: "#9A9AA5" },
-    ],
     blessing: "วันแห่งความรักและความงาม เสน่ห์แรง เจรจาเรื่องหัวใจได้ผลดี",
     outfits: [
       {
@@ -262,17 +218,8 @@ export const LUCKY_DAYS: LuckyDay[] = [
     ],
   },
   {
-    weekday: 6,
     name: "เสาร์",
     emoji: "🔮",
-    planet: "พระเสาร์",
-    main: { name: "ม่วงลาเวนเดอร์", hex: "#C3ACF0" },
-    lucky: [
-      { name: "ม่วงอ่อน", hex: "#DCCDF7" },
-      { name: "เทาหม่น", hex: "#C4C2CC" },
-      { name: "ดำนุ่ม", hex: "#8A8194" },
-    ],
-    avoid: [{ name: "เขียว", hex: "#A8E0C0" }],
     blessing: "วันแห่งความอดทนและการปลดเปลื้อง เหมาะกับการสะสางเรื่องเก่า",
     outfits: [
       {
@@ -298,9 +245,38 @@ export const LUCKY_DAYS: LuckyDay[] = [
   },
 ];
 
+/** ประกอบข้อมูลวัน: เนื้อหาที่เขียนเอง + สีที่คำนวณจากทักษา */
+function buildLuckyDay(weekday: number): LuckyDay {
+  const meta = DAY_META[weekday];
+  const planetKey = getPlanetOfWeekday(weekday);
+  const planet = PLANETS[planetKey];
+
+  return {
+    weekday,
+    name: meta.name,
+    emoji: meta.emoji,
+    planet: planet.name,
+    planetKey,
+    thaksa: getThaksaChart(planetKey),
+    main: planet.colors[0],
+    lucky: getHighlightedColors(planetKey).map((entry) => entry.planet.colors[0]),
+    avoid: getKalakini(planetKey).planet.colors,
+    blessing: meta.blessing,
+    outfits: meta.outfits,
+  };
+}
+
+export const LUCKY_DAYS: LuckyDay[] = DAY_META.map((_, weekday) =>
+  buildLuckyDay(weekday),
+);
+
 export function getLuckyDay(weekday: number): LuckyDay {
   return LUCKY_DAYS[weekday];
 }
+
+/* ------------------------------------------------------------------ */
+/* ไอเดียแต่งตัว — ส่วนที่เขียนขึ้นเอง ไม่ได้อ้างอิงตำรา                 */
+/* ------------------------------------------------------------------ */
 
 export const OUTFIT_STYLE_LABELS: Record<OutfitIdea["style"], string> = {
   dress: "ลุคเดรส",
@@ -309,22 +285,14 @@ export const OUTFIT_STYLE_LABELS: Record<OutfitIdea["style"], string> = {
 };
 
 export type OutfitLook = OutfitIdea & {
-  /** สีเสื้อของลุคนี้ */
   color: ColorSwatch;
-  /** สีกระโปรง/กางเกงและรองเท้า */
   accent: ColorSwatch;
-  /** ลุคที่ระบบเชียร์เป็นพิเศษของวันนี้ */
   isFeatured: boolean;
 };
 
 /**
  * ไอเดียแต่งตัวทั้ง 3 ลุคของวันนี้ พร้อมสีของแต่ละลุค
- *
- * แต่ละลุคหยิบสีคนละเฉดจากชุดสีมงคลของวันนั้น เพื่อให้เห็นภาพว่าสีมงคล
- * เอาไปใช้ได้หลายแบบ ไม่ใช่มีสีเดียว
- *
- * ลุคที่ถูกเชียร์ใช้ seed จากวันที่ ทำให้ทั้งวันได้คำแนะนำเดิม
- * แต่พอข้ามวันก็สลับให้ไม่จำเจ
+ * แต่ละลุคหยิบสีคนละเฉดจากชุดสีมงคลที่ทักษาคำนวณไว้
  */
 export function getDailyLooks(day: LuckyDay, isoDate: string): OutfitLook[] {
   const featuredIndex = Math.floor(
@@ -341,7 +309,10 @@ export function getDailyLooks(day: LuckyDay, isoDate: string): OutfitLook[] {
   }));
 }
 
-/** ของนำโชคประจำวัน — เกร็ดเล็กๆ ให้หน้าแรกมีอะไรให้อ่านเพิ่ม */
+/* ------------------------------------------------------------------ */
+/* ของนำโชคประจำวัน — ส่วนที่เขียนขึ้นเอง                                */
+/* ------------------------------------------------------------------ */
+
 const LUCKY_CHARMS = [
   "พกผ้าเช็ดหน้าสีอ่อนติดกระเป๋า",
   "ดื่มน้ำอุ่นหนึ่งแก้วก่อนออกจากบ้าน",

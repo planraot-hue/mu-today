@@ -1,10 +1,10 @@
 import { redirect } from "next/navigation";
-import { getCurrentUser } from "@/lib/supabase/server";
+import { getViewer } from "@/lib/viewer";
 import { PhromYanDeck } from "./PhromYanDeck";
 
 export default async function PhromYanPage() {
-  const user = await getCurrentUser();
-  if (!user) redirect("/login");
+  const viewer = await getViewer();
+  if (!viewer.canView) redirect("/login");
 
   return (
     <main className="mx-auto max-w-4xl px-4 pb-8 pt-6 sm:px-5">

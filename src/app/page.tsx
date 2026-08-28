@@ -8,7 +8,7 @@ import {
   getLuckyDay,
   type OutfitLook,
 } from "@/lib/lucky-color";
-import { getCurrentUser } from "@/lib/supabase/server";
+import { getViewer } from "@/lib/viewer";
 import { formatThaiFullDate, getThaiToday } from "@/lib/thai-date";
 
 // วันที่ต้องสดใหม่ทุกครั้งที่เปิด ห้ามให้ Next.js แคชหน้านี้ไว้ข้ามวัน
@@ -40,8 +40,8 @@ const FEATURE_LINKS = [
 
 export default async function HomePage() {
   // ตรวจซ้ำอีกชั้นนอกเหนือจาก middleware
-  const user = await getCurrentUser();
-  if (!user) redirect("/login");
+  const viewer = await getViewer();
+  if (!viewer.canView) redirect("/login");
 
   const today = getThaiToday();
   const day = getLuckyDay(today.weekday);

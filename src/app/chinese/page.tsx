@@ -1,13 +1,13 @@
 import { redirect } from "next/navigation";
-import { getCurrentUser } from "@/lib/supabase/server";
+import { getViewer } from "@/lib/viewer";
 import { getThaiToday } from "@/lib/thai-date";
 import { ChineseFortune } from "./ChineseFortune";
 
 export const dynamic = "force-dynamic";
 
 export default async function ChinesePage() {
-  const user = await getCurrentUser();
-  if (!user) redirect("/login");
+  const viewer = await getViewer();
+  if (!viewer.canView) redirect("/login");
 
   const today = getThaiToday();
 

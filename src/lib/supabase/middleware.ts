@@ -2,6 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import type { CookieToSet } from "./cookies";
 import { NextResponse, type NextRequest } from "next/server";
 import { SUPABASE_ANON_KEY, SUPABASE_URL } from "./env";
+import { GUEST_COOKIE, GUEST_COOKIE_VALUE } from "@/lib/viewer";
 
 /** เส้นทางที่เข้าได้โดยไม่ต้องล็อกอิน */
 const PUBLIC_PATHS = ["/login", "/auth/callback", "/auth/auth-error"];
@@ -49,6 +50,11 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
+  // ผู้เยี่ยมชมที่ยังไม่มีบัญชีก็เข้าดูเนื้อหาได้เหมือนกัน
+  const isGuest =
+    request.cookies.get(GUEST_COOKIE)?.value === GUEST_COOKIE_VALUE;
+  const canView = Boolean(user) || isGuest;
+
   const { pathname, search } = request.nextUrl;
 
   // ล็อกอินอยู่แล้วไม่ต้องเห็นหน้า login อีก
@@ -57,7 +63,7 @@ export async function updateSession(request: NextRequest) {
   }
 
   // ยังไม่ล็อกอินและกำลังจะเข้าหน้าที่ต้องล็อกอิน
-  if (!user && !isPublicPath(pathname)) {
+  if (!canView && !isPublicPath(pathname)) {
     return redirectWithCookies(
       request,
       "/login",

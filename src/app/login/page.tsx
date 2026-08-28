@@ -1,3 +1,4 @@
+import { continueAsGuestAction } from "@/app/actions";
 import { LoginForm } from "./LoginForm";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 
@@ -33,6 +34,26 @@ export default async function LoginPage({
             </p>
           </div>
         )}
+
+        <div className="mt-6 flex items-center gap-3">
+          <span className="h-px flex-1 bg-line" />
+          <span className="text-xs text-ink-soft">หรือ</span>
+          <span className="h-px flex-1 bg-line" />
+        </div>
+
+        <form action={continueAsGuestAction}>
+          <button
+            type="submit"
+            className="mt-4 w-full rounded-full border border-line bg-card px-4 py-3 text-sm font-semibold text-ink transition hover:border-lilac-deep hover:text-lilac-deep"
+          >
+            👀 เข้าดูแบบผู้เยี่ยมชม
+          </button>
+        </form>
+
+        <p className="mt-2 text-center text-xs leading-relaxed text-ink-soft">
+          ดูดวงได้ครบทุกฟีเจอร์โดยไม่ต้องสมัคร
+          แต่จะไม่ได้เก็บข้อมูลข้ามเครื่อง
+        </p>
       </div>
     </main>
   );

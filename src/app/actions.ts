@@ -1,9 +1,14 @@
 "use server";
 
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import {
+  GUEST_COOKIE,
+  GUEST_COOKIE_VALUE,
+  GUEST_MAX_AGE,
+} from "@/lib/viewer";
 
 export type AuthState = {
   error: string | null;
@@ -155,6 +160,35 @@ export async function signOutAction(): Promise<void> {
     // ออกจากระบบไม่สำเร็จก็ยังพากลับไปหน้า login อยู่ดี
     console.error(error);
   }
+
+  // ล้างคุกกี้ผู้เยี่ยมชมด้วย ไม่งั้นกดออกจากระบบแล้วยังเข้าดูได้อยู่
+  const cookieStore = await cookies();
+  cookieStore.delete(GUEST_COOKIE);
+
+  revalidatePath("/", "layout");
+  redirect("/login");
+}
+
+/** เข้าใช้งานแบบผู้เยี่ยมชม โดยไม่ต้องมีบัญชี */
+export async function continueAsGuestAction(): Promise<void> {
+  const cookieStore = await cookies();
+
+  cookieStore.set(GUEST_COOKIE, GUEST_COOKIE_VALUE, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    maxAge: GUEST_MAX_AGE,
+  });
+
+  revalidatePath("/", "layout");
+  redirect("/");
+}
+
+/** ออกจากโหมดผู้เยี่ยมชม กลับไปหน้าเข้าสู่ระบบ */
+export async function exitGuestAction(): Promise<void> {
+  const cookieStore = await cookies();
+  cookieStore.delete(GUEST_COOKIE);
 
   revalidatePath("/", "layout");
   redirect("/login");
