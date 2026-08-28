@@ -17,25 +17,54 @@ export type Zodiac = {
   symbol: string;
   range: string;
   element: "ไฟ" | "ดิน" | "ลม" | "น้ำ";
+  /** วันเริ่มราศี [เดือน, วัน] ใช้คำนวณราศีจากวันเกิด */
+  start: [number, number];
 };
 
 export const ZODIACS: Zodiac[] = [
-  { id: "aries", name: "เมษ", symbol: "♈", range: "13 เม.ย. – 13 พ.ค.", element: "ไฟ" },
-  { id: "taurus", name: "พฤษภ", symbol: "♉", range: "14 พ.ค. – 13 มิ.ย.", element: "ดิน" },
-  { id: "gemini", name: "เมถุน", symbol: "♊", range: "14 มิ.ย. – 14 ก.ค.", element: "ลม" },
-  { id: "cancer", name: "กรกฎ", symbol: "♋", range: "15 ก.ค. – 16 ส.ค.", element: "น้ำ" },
-  { id: "leo", name: "สิงห์", symbol: "♌", range: "17 ส.ค. – 16 ก.ย.", element: "ไฟ" },
-  { id: "virgo", name: "กันย์", symbol: "♍", range: "17 ก.ย. – 16 ต.ค.", element: "ดิน" },
-  { id: "libra", name: "ตุลย์", symbol: "♎", range: "17 ต.ค. – 15 พ.ย.", element: "ลม" },
-  { id: "scorpio", name: "พิจิก", symbol: "♏", range: "16 พ.ย. – 15 ธ.ค.", element: "น้ำ" },
-  { id: "sagittarius", name: "ธนู", symbol: "♐", range: "16 ธ.ค. – 13 ม.ค.", element: "ไฟ" },
-  { id: "capricorn", name: "มังกร", symbol: "♑", range: "14 ม.ค. – 12 ก.พ.", element: "ดิน" },
-  { id: "aquarius", name: "กุมภ์", symbol: "♒", range: "13 ก.พ. – 14 มี.ค.", element: "ลม" },
-  { id: "pisces", name: "มีน", symbol: "♓", range: "15 มี.ค. – 12 เม.ย.", element: "น้ำ" },
+  { id: "aries", name: "เมษ", symbol: "♈", range: "13 เม.ย. – 13 พ.ค.", element: "ไฟ", start: [4, 13] },
+  { id: "taurus", name: "พฤษภ", symbol: "♉", range: "14 พ.ค. – 13 มิ.ย.", element: "ดิน", start: [5, 14] },
+  { id: "gemini", name: "เมถุน", symbol: "♊", range: "14 มิ.ย. – 14 ก.ค.", element: "ลม", start: [6, 14] },
+  { id: "cancer", name: "กรกฎ", symbol: "♋", range: "15 ก.ค. – 16 ส.ค.", element: "น้ำ", start: [7, 15] },
+  { id: "leo", name: "สิงห์", symbol: "♌", range: "17 ส.ค. – 16 ก.ย.", element: "ไฟ", start: [8, 17] },
+  { id: "virgo", name: "กันย์", symbol: "♍", range: "17 ก.ย. – 16 ต.ค.", element: "ดิน", start: [9, 17] },
+  { id: "libra", name: "ตุลย์", symbol: "♎", range: "17 ต.ค. – 15 พ.ย.", element: "ลม", start: [10, 17] },
+  { id: "scorpio", name: "พิจิก", symbol: "♏", range: "16 พ.ย. – 15 ธ.ค.", element: "น้ำ", start: [11, 16] },
+  { id: "sagittarius", name: "ธนู", symbol: "♐", range: "16 ธ.ค. – 13 ม.ค.", element: "ไฟ", start: [12, 16] },
+  { id: "capricorn", name: "มังกร", symbol: "♑", range: "14 ม.ค. – 12 ก.พ.", element: "ดิน", start: [1, 14] },
+  { id: "aquarius", name: "กุมภ์", symbol: "♒", range: "13 ก.พ. – 14 มี.ค.", element: "ลม", start: [2, 13] },
+  { id: "pisces", name: "มีน", symbol: "♓", range: "15 มี.ค. – 12 เม.ย.", element: "น้ำ", start: [3, 15] },
 ];
 
 export function getZodiac(id: string): Zodiac | undefined {
   return ZODIACS.find((zodiac) => zodiac.id === id);
+}
+
+/**
+ * หาราศีจากวันเดือนเกิด (ใช้ราศีแบบโหราศาสตร์ไทย ซึ่งเริ่มราศีช้ากว่าแบบสากลราว 2 สัปดาห์)
+ *
+ * @param month 1–12
+ * @param day 1–31
+ */
+export function getZodiacByDate(month: number, day: number): Zodiac {
+  const key = month * 100 + day;
+
+  // เรียงตามวันเริ่มราศี แล้วหาอันสุดท้ายที่ยังไม่เกินวันเกิด
+  const sorted = [...ZODIACS].sort(
+    (a, b) => a.start[0] * 100 + a.start[1] - (b.start[0] * 100 + b.start[1]),
+  );
+
+  let matched = sorted[0];
+  for (const zodiac of sorted) {
+    if (key >= zodiac.start[0] * 100 + zodiac.start[1]) matched = zodiac;
+  }
+
+  // ก่อนวันที่ 14 ม.ค. ยังนับเป็นราศีธนูที่คาบมาจากเดือนธันวาคมปีก่อน
+  if (key < sorted[0].start[0] * 100 + sorted[0].start[1]) {
+    matched = ZODIACS.find((zodiac) => zodiac.id === "sagittarius") ?? matched;
+  }
+
+  return matched;
 }
 
 export type PeriodType = "daily" | "weekly" | "monthly";

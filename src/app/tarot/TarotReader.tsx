@@ -99,7 +99,7 @@ export function TarotReader() {
               disabled={isShuffling}
               className={`rounded-2xl border p-4 text-left transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-70 ${
                 spread === item.type && drawn
-                  ? "border-transparent bg-sky-deep text-white shadow-sm"
+                  ? "grad-sky"
                   : "border-line bg-card text-ink hover:border-sky-deep"
               }`}
             >

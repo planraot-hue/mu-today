@@ -243,7 +243,7 @@ export function SiamsiShaker() {
           <button
             type="button"
             onClick={reset}
-            className="mt-5 w-full rounded-full bg-mint-deep px-4 py-3 text-sm font-semibold text-white transition hover:opacity-90"
+            className="mt-5 w-full rounded-full px-4 py-3 text-sm font-semibold transition hover:opacity-90 grad-mint"
           >
             🥢 เสี่ยงใหม่อีกครั้ง
           </button>

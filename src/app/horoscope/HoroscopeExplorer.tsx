@@ -69,7 +69,7 @@ export function HoroscopeExplorer({ periodKeys, periodLabels }: Props) {
                   aria-pressed={isActive}
                   className={`w-full rounded-2xl border px-2 py-3 text-center transition ${
                     isActive
-                      ? "border-transparent bg-lilac-deep text-white shadow-sm"
+                      ? "grad-violet"
                       : "border-line bg-card text-ink hover:border-lilac-deep"
                   }`}
                 >
@@ -109,7 +109,7 @@ export function HoroscopeExplorer({ periodKeys, periodLabels }: Props) {
                 onClick={() => setPeriod(key)}
                 className={`flex-1 rounded-full px-3 py-2 text-sm transition ${
                   isActive
-                    ? "bg-lilac-deep text-white shadow-sm"
+                    ? "grad-violet"
                     : "text-ink-soft hover:text-ink"
                 }`}
               >

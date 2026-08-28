@@ -5,10 +5,14 @@ import { usePathname } from "next/navigation";
 import { signOutAction } from "@/app/actions";
 
 const NAV_ITEMS = [
-  { href: "/", label: "สีมงคล", emoji: "🎨" },
-  { href: "/horoscope", label: "ดวงราศี", emoji: "🔮" },
-  { href: "/siamsi", label: "เซียมซี", emoji: "🥢" },
-  { href: "/tarot", label: "ทาโรต์", emoji: "🃏" },
+  { href: "/", label: "สีมงคล", emoji: "🎨", grad: "grad-pink" },
+  { href: "/birth", label: "วันเกิด", emoji: "🎂", grad: "grad-sun" },
+  { href: "/horoscope", label: "ราศี", emoji: "🔮", grad: "grad-violet" },
+  { href: "/chinese", label: "ดวงจีน", emoji: "🧧", grad: "grad-sun" },
+  { href: "/love", label: "สมพงศ์", emoji: "💞", grad: "grad-pink" },
+  { href: "/siamsi", label: "เซียมซี", emoji: "🥢", grad: "grad-mint" },
+  { href: "/tarot", label: "ทาโรต์", emoji: "🃏", grad: "grad-sky" },
+  { href: "/phrom-yan", label: "พรหมญาณ", emoji: "🔯", grad: "grad-violet" },
 ];
 
 export function SiteHeader({ email }: { email: string | null }) {
@@ -65,7 +69,7 @@ export function SiteHeader({ email }: { email: string | null }) {
                   aria-current={isActive ? "page" : undefined}
                   className={`flex items-center gap-1.5 rounded-full border px-4 py-2 text-sm transition ${
                     isActive
-                      ? "border-transparent bg-blossom-deep text-white shadow-sm"
+                      ? item.grad
                       : "border-line bg-card/70 text-ink-soft hover:border-blossom hover:text-ink"
                   }`}
                 >

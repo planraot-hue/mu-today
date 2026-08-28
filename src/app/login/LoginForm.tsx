@@ -60,7 +60,7 @@ export function LoginForm({ next }: { next: string }) {
             onClick={() => setMode(item)}
             className={`flex-1 rounded-full px-3 py-2 text-sm transition ${
               mode === item
-                ? "bg-blossom-deep text-white shadow-sm"
+                ? "grad-pink"
                 : "text-ink-soft hover:text-ink"
             }`}
           >

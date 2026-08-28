@@ -43,6 +43,49 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* ---------- ปุ่มเลือกประเภทแบบไล่สี ----------
+   ใช้เป็นคลาสธรรมดาแทน utility ของ Tailwind เพราะชื่อ utility ของ gradient
+   เปลี่ยนไปใน Tailwind v4 การเขียน CSS ตรงๆ จึงไม่มีความเสี่ยงพัง */
+
+.grad-pink,
+.grad-violet,
+.grad-mint,
+.grad-sun,
+.grad-sky {
+  color: #ffffff;
+  border-color: transparent;
+  box-shadow: 0 6px 16px -8px rgba(74, 59, 82, 0.55);
+}
+
+.grad-pink {
+  background-image: linear-gradient(135deg, #ff9ec4 0%, #b98cf0 100%);
+}
+
+.grad-violet {
+  background-image: linear-gradient(135deg, #a98fee 0%, #6fb3e8 100%);
+}
+
+.grad-mint {
+  background-image: linear-gradient(135deg, #66c79b 0%, #6fb3e8 100%);
+}
+
+.grad-sun {
+  background-image: linear-gradient(135deg, #ffc46b 0%, #ff8fb1 100%);
+}
+
+.grad-sky {
+  background-image: linear-gradient(135deg, #6fb3e8 0%, #66c79b 100%);
+}
+
+/* ไล่สีสำหรับพื้นหลังการ์ดผลลัพธ์ โทนอ่อนกว่าปุ่ม */
+.grad-soft-pink {
+  background-image: linear-gradient(135deg, #ffe3ef 0%, #ece4ff 100%);
+}
+
+.grad-soft-violet {
+  background-image: linear-gradient(135deg, #ece4ff 0%, #ddeeff 100%);
+}
+
 /* ---------- ลูกเล่นเคลื่อนไหว ---------- */
 
 @keyframes float-soft {
