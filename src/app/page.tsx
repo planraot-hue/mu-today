@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { CuteCharacter } from "@/components/CuteCharacter";
 import { getDailyCharm, getLuckyDay, getOutfitOfTheDay } from "@/lib/lucky-color";
-import { getSession } from "@/lib/session-cookie";
+import { getCurrentUser } from "@/lib/supabase/server";
 import { formatThaiFullDate, getThaiToday } from "@/lib/thai-date";
 
 // วันที่ต้องสดใหม่ทุกครั้งที่เปิด ห้ามให้ Next.js แคชหน้านี้ไว้ข้ามวัน
@@ -34,8 +34,8 @@ const FEATURE_LINKS = [
 
 export default async function HomePage() {
   // ตรวจซ้ำอีกชั้นนอกเหนือจาก middleware
-  const session = await getSession();
-  if (!session) redirect("/login");
+  const user = await getCurrentUser();
+  if (!user) redirect("/login");
 
   const today = getThaiToday();
   const day = getLuckyDay(today.weekday);

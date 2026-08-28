@@ -36,43 +36,63 @@
   [DONE] ปิดแอนิเมชันอัตโนมัติถ้าผู้ใช้ตั้ง prefers-reduced-motion ไว้ในเครื่อง
   [DONE] ล็อกเป็นธีมสว่างอย่างเดียว เพื่อให้โทนพาสเทลไม่เพี้ยน
 
-#ระบบ login (ของเดิม ยังใช้อยู่)
-- Login แบบง่าย ด้วย รหัสแบบ fixed
-  [DONE] รหัสอ่านจาก env var APP_PASSWORD ตรวจฝั่ง server เท่านั้น
-  [DONE] เทียบรหัสแบบ timing-safe / session JWT ใน cookie httpOnly อายุ 7 วัน
-  [DONE] middleware กันทุกหน้ายกเว้น /login + ตรวจซ้ำในทุกหน้า
-  [DONE] rate limit 5 ครั้ง / 5 นาที, กัน open redirect, ปุ่มออกจากระบบบนหัวเว็บ
-  หมายเหตุ: ตอนนี้ทั้งเว็บอยู่หลังรหัสผ่าน ถ้าอยากเปิดให้คนทั่วไปเข้าดู
-  ให้แก้ matcher ใน src/middleware.ts ให้กันเฉพาะหน้าที่ต้องการ
+#ระบบ login (เปลี่ยนมาใช้ Supabase Auth แล้ว)
+- ใช้ Supabase เป็นฐานข้อมูล เชื่อมด้วย Anon key + Project URL
+  [DONE] สมัครสมาชิก / เข้าสู่ระบบ ด้วยอีเมล + รหัสผ่าน ผ่าน Supabase Auth
+  [DONE] หน้า /login สลับแท็บระหว่างเข้าสู่ระบบกับสมัครสมาชิกได้
+  [DONE] ยืนยันอีเมลผ่านลิงก์ รับกลับที่ /auth/callback แล้วแลก code เป็น session
+  [DONE] หน้า /auth/auth-error สำหรับลิงก์ยืนยันหมดอายุหรือไม่สมบูรณ์
+  [DONE] middleware ต่ออายุ session cookie ทุก request + กันหน้าที่ต้องล็อกอิน
+  [DONE] ตรวจซ้ำในทุกหน้าด้วย getCurrentUser() ไม่พึ่ง middleware อย่างเดียว
+  [DONE] ใช้ getUser() ไม่ใช่ getSession() เพราะ getUser() ยืนยัน token กับ Supabase จริง
+  [DONE] ห่อ getCurrentUser ด้วย cache() ของ React กันยิง Supabase ซ้ำใน request เดียว
+  [DONE] แปลข้อความ error ของ Supabase เป็นภาษาไทย
+  [DONE] แสดงอีเมลผู้ใช้บนหัวเว็บ + ปุ่มออกจากระบบ
+  [DONE] กัน open redirect ทั้งที่ Server Action และที่ /auth/callback
+  ถอดของเดิมออกแล้ว: รหัส fixed, jose, APP_PASSWORD, SESSION_SECRET, rate limit ใน memory
+
+  ต้องตั้งค่าฝั่ง Supabase Dashboard ด้วย:
+  - Authentication > Providers > Email เปิดไว้
+  - Authentication > URL Configuration ใส่ Site URL และ Redirect URL
+    ให้ครอบคลุม <โดเมนจริง>/auth/callback และ http://localhost:3000/auth/callback
 
 #deployment
 - ใช้ vercel + NextJS
   [DONE] Next.js 15 App Router + TypeScript + Tailwind CSS v4
-  [DONE] ไม่มีฐานข้อมูล ไม่มี service ภายนอก — คำทำนายทั้งหมดอยู่ในโค้ด
-  [DONE] dependency นอกเหนือจาก template มีตัวเดียวคือ jose (เซ็น JWT)
+  [DONE] คำทำนายทั้งหมดอยู่ในโค้ด ยังไม่ต้องสร้างตารางในฐานข้อมูล
+  [DONE] dependency นอกเหนือจาก template: @supabase/supabase-js + @supabase/ssr
   [DONE] ขึ้น GitHub แล้วที่ planraot-hue/mu-today
-  ต้องตั้ง env 2 ตัวใน Vercel: APP_PASSWORD, SESSION_SECRET
+  ต้องตั้ง env 2 ตัวใน Vercel: NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY
 
 #โครงสร้างไฟล์
-  src/middleware.ts              กันเส้นทาง
-  src/components/SiteHeader.tsx  เมนูบนหัวเว็บ + ปุ่มออกจากระบบ
+  src/middleware.ts              เรียก updateSession ของ Supabase
+  src/components/SiteHeader.tsx  เมนูบนหัวเว็บ + อีเมลผู้ใช้ + ปุ่มออกจากระบบ
   src/components/CuteCharacter.tsx  ตัวการ์ตูน SVG
+  src/lib/supabase/env.ts        อ่านและตรวจค่า env ของ Supabase
+  src/lib/supabase/client.ts     client ฝั่ง browser
+  src/lib/supabase/server.ts     client ฝั่ง server + getCurrentUser()
+  src/lib/supabase/middleware.ts ต่ออายุ session + กันเส้นทาง
   src/lib/thai-date.ts           วันที่ไทย (ยึดเวลา Asia/Bangkok เสมอ)
   src/lib/random.ts              สุ่มแบบมี seed
   src/lib/lucky-color.ts         ข้อมูลสีมงคล 7 วัน + ไอเดียแต่งตัว
   src/lib/zodiac.ts              12 ราศี + คลังคำทำนาย
   src/lib/siamsi.ts              4 วัด x 8 ใบเซียมซี
   src/lib/tarot.ts               ไพ่ทาโรต์ 22 ใบ
-  src/lib/session*.ts, auth.ts   ระบบ login
+  src/app/actions.ts             Server Action: signIn / signUp / signOut
   src/app/page.tsx               หน้าแรก สีมงคล
   src/app/horoscope/             ดวงราศี
   src/app/siamsi/                เซียมซี
   src/app/tarot/                 ไพ่ทาโรต์
-  src/app/login/                 หน้า login
+  src/app/login/                 หน้าเข้าสู่ระบบ / สมัครสมาชิก
+  src/app/auth/callback/         รับลิงก์ยืนยันอีเมล
+  src/app/auth/auth-error/       หน้าแจ้งลิงก์ยืนยันมีปัญหา
 
 #TODO ต่อไป (ยังไม่ได้ทำ)
+- ลืมรหัสผ่าน / ตั้งรหัสใหม่ผ่านอีเมล (Supabase resetPasswordForEmail)
+- เข้าสู่ระบบด้วย Google / Facebook (Supabase OAuth provider)
+- เก็บประวัติการเสี่ยงเซียมซีและเปิดไพ่ลงตาราง Supabase ผูกกับ user_id แล้วเปิด RLS
+- โปรไฟล์ผู้ใช้ เก็บวันเกิดไว้คำนวณราศีให้อัตโนมัติ แทนการให้เลือกเอง
 - เพิ่มจำนวนใบเซียมซีให้ครบ 28 ใบตามของจริง (ตอนนี้วัดละ 8 ใบ)
 - เพิ่มไพ่ทาโรต์ชุดรอง (Minor Arcana) อีก 56 ใบ
-- คำนวณราศีจากวันเกิดให้อัตโนมัติ แทนการให้ผู้ใช้เลือกเอง
 - ปุ่มแชร์ผลคำทำนายเป็นรูปภาพลงโซเชียล
 - เสียงประกอบตอนเขย่าเซียมซี

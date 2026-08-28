@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { logoutAction } from "@/app/actions";
+import { signOutAction } from "@/app/actions";
 
 const NAV_ITEMS = [
   { href: "/", label: "สีมงคล", emoji: "🎨" },
@@ -11,11 +11,11 @@ const NAV_ITEMS = [
   { href: "/tarot", label: "ทาโรต์", emoji: "🃏" },
 ];
 
-export function SiteHeader() {
+export function SiteHeader({ email }: { email: string | null }) {
   const pathname = usePathname();
 
-  // หน้า login ไม่ควรเห็นเมนูหรือปุ่มออกจากระบบ
-  if (pathname === "/login") return null;
+  // หน้าเกี่ยวกับการเข้าสู่ระบบไม่ควรเห็นเมนูหรือปุ่มออกจากระบบ
+  if (pathname === "/login" || pathname.startsWith("/auth/")) return null;
 
   return (
     <header className="mx-auto w-full max-w-4xl px-4 pt-5 sm:px-5">
@@ -29,14 +29,25 @@ export function SiteHeader() {
           </span>
         </Link>
 
-        <form action={logoutAction}>
-          <button
-            type="submit"
-            className="rounded-full border border-line bg-card/70 px-3 py-1.5 text-xs text-ink-soft transition hover:border-blossom-deep hover:text-blossom-deep"
-          >
-            ออกจากระบบ
-          </button>
-        </form>
+        <div className="flex min-w-0 items-center gap-2">
+          {email && (
+            <span
+              className="hidden max-w-[180px] truncate text-xs text-ink-soft sm:inline"
+              title={email}
+            >
+              {email}
+            </span>
+          )}
+
+          <form action={signOutAction}>
+            <button
+              type="submit"
+              className="shrink-0 rounded-full border border-line bg-card/70 px-3 py-1.5 text-xs text-ink-soft transition hover:border-blossom-deep hover:text-blossom-deep"
+            >
+              ออกจากระบบ
+            </button>
+          </form>
+        </div>
       </div>
 
       <nav className="mt-4">

@@ -1,10 +1,10 @@
 import { redirect } from "next/navigation";
-import { getSession } from "@/lib/session-cookie";
+import { getCurrentUser } from "@/lib/supabase/server";
 import { TarotReader } from "./TarotReader";
 
 export default async function TarotPage() {
-  const session = await getSession();
-  if (!session) redirect("/login");
+  const user = await getCurrentUser();
+  if (!user) redirect("/login");
 
   return (
     <main className="mx-auto max-w-4xl px-4 pb-8 pt-6 sm:px-5">

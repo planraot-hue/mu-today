@@ -1,4 +1,5 @@
 import { LoginForm } from "./LoginForm";
+import { isSupabaseConfigured } from "@/lib/supabase/env";
 
 export default async function LoginPage({
   searchParams,
@@ -16,11 +17,22 @@ export default async function LoginPage({
           </p>
           <h1 className="mt-2 font-cute text-3xl text-ink">มูทูเดย์</h1>
           <p className="mt-1 text-sm text-ink-soft">
-            ดูดวงประจำวัน · ใส่รหัสผ่านเพื่อเข้าใช้งาน
+            ดูดวงประจำวัน · เข้าสู่ระบบเพื่อเริ่มใช้งาน
           </p>
         </div>
 
-        <LoginForm next={next ?? "/"} />
+        {isSupabaseConfigured ? (
+          <LoginForm next={next ?? "/"} />
+        ) : (
+          <div className="rounded-2xl bg-butter/60 p-4 text-sm leading-relaxed text-ink">
+            <p className="font-semibold">ยังเชื่อมต่อ Supabase ไม่ได้</p>
+            <p className="mt-1 text-ink-soft">
+              ต้องตั้งค่า <code>NEXT_PUBLIC_SUPABASE_URL</code> และ{" "}
+              <code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code> ก่อน ดูขั้นตอนได้ใน
+              README.md
+            </p>
+          </div>
+        )}
       </div>
     </main>
   );

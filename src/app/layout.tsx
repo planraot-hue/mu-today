@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Itim, Mali } from "next/font/google";
 import { SiteHeader } from "@/components/SiteHeader";
+import { getCurrentUser } from "@/lib/supabase/server";
 import "./globals.css";
 
 const mali = Mali({
@@ -30,13 +31,24 @@ export const viewport: Viewport = {
   themeColor: "#fff8f2",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  // อ่านผู้ใช้ไว้โชว์อีเมลบนหัวเว็บ
+  // ถ้ายังไม่ได้ตั้งค่า Supabase จะ throw ตรงนี้ — กลืนไว้แล้วให้หน้า login
+  // เป็นคนแสดงคำแนะนำการตั้งค่าแทน
+  let email: string | null = null;
+  try {
+    const user = await getCurrentUser();
+    email = user?.email ?? null;
+  } catch (error) {
+    console.error(error);
+  }
+
   return (
     <html lang="th" className={`${mali.variable} ${itim.variable}`}>
       <body className="min-h-dvh font-sans antialiased">
-        <SiteHeader />
+        <SiteHeader email={email} />
         {children}
         <footer className="mx-auto max-w-4xl px-5 pb-10 pt-4 text-center text-xs text-ink-soft">
           <p>
