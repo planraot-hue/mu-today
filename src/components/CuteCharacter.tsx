@@ -7,6 +7,8 @@ type Props = {
   accentColor: string;
   /** ทรงชุดตามไอเดียการแต่งตัวของวันนั้น */
   style: OutfitIdea["style"];
+  /** ปิดประกายรอบตัวสำหรับรูปขนาดเล็ก จะได้ไม่รก */
+  showSparkles?: boolean;
   className?: string;
 };
 
@@ -24,6 +26,7 @@ export function CuteCharacter({
   accentColor,
   style,
   className,
+  showSparkles = true,
 }: Props) {
   return (
     <svg
@@ -145,7 +148,8 @@ export function CuteCharacter({
         <circle cx="0" cy="0" r="4.5" fill={accentColor} />
       </g>
 
-      {/* ประกายรอบตัว */}
+      {/* ประกายรอบตัว — ปิดได้สำหรับตัวการ์ตูนขนาดเล็ก */}
+      {showSparkles && (
       <g fill={accentColor}>
         <circle cx="34" cy="60" r="4" className="animate-twinkle" />
         <circle
@@ -163,6 +167,7 @@ export function CuteCharacter({
           style={{ animationDelay: "1.3s" }}
         />
       </g>
+      )}
     </svg>
   );
 }

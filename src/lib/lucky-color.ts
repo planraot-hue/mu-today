@@ -302,12 +302,43 @@ export function getLuckyDay(weekday: number): LuckyDay {
   return LUCKY_DAYS[weekday];
 }
 
+export const OUTFIT_STYLE_LABELS: Record<OutfitIdea["style"], string> = {
+  dress: "ลุคเดรส",
+  casual: "ลุคลำลอง",
+  hoodie: "ลุคสบายๆ",
+};
+
+export type OutfitLook = OutfitIdea & {
+  /** สีเสื้อของลุคนี้ */
+  color: ColorSwatch;
+  /** สีกระโปรง/กางเกงและรองเท้า */
+  accent: ColorSwatch;
+  /** ลุคที่ระบบเชียร์เป็นพิเศษของวันนี้ */
+  isFeatured: boolean;
+};
+
 /**
- * เลือกไอเดียการแต่งตัวของวันนี้
- * ใช้ seed จากวันที่ ทำให้ทั้งวันได้ชุดเดิม แต่พอข้ามวันก็เปลี่ยนให้ไม่จำเจ
+ * ไอเดียแต่งตัวทั้ง 3 ลุคของวันนี้ พร้อมสีของแต่ละลุค
+ *
+ * แต่ละลุคหยิบสีคนละเฉดจากชุดสีมงคลของวันนั้น เพื่อให้เห็นภาพว่าสีมงคล
+ * เอาไปใช้ได้หลายแบบ ไม่ใช่มีสีเดียว
+ *
+ * ลุคที่ถูกเชียร์ใช้ seed จากวันที่ ทำให้ทั้งวันได้คำแนะนำเดิม
+ * แต่พอข้ามวันก็สลับให้ไม่จำเจ
  */
-export function getOutfitOfTheDay(day: LuckyDay, isoDate: string): OutfitIdea {
-  return pick(createRng(`outfit:${isoDate}`), day.outfits);
+export function getDailyLooks(day: LuckyDay, isoDate: string): OutfitLook[] {
+  const featuredIndex = Math.floor(
+    createRng(`outfit:${isoDate}`)() * day.outfits.length,
+  );
+
+  const palette = [day.main, ...day.lucky];
+
+  return day.outfits.map((outfit, index) => ({
+    ...outfit,
+    color: palette[index % palette.length],
+    accent: palette[(index + 1) % palette.length],
+    isFeatured: index === featuredIndex,
+  }));
 }
 
 /** ของนำโชคประจำวัน — เกร็ดเล็กๆ ให้หน้าแรกมีอะไรให้อ่านเพิ่ม */

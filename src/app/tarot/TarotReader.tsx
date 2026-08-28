@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
+  DECK_SIZE,
   POSITION_HINTS,
-  TAROT_DECK,
-  THREE_CARD_POSITIONS,
+  SUIT_INFO,
+  drawCards,
   type DrawnCard,
   type TarotSpreadType,
 } from "@/lib/tarot";
@@ -15,38 +16,54 @@ const SPREADS: {
   detail: string;
   count: number;
 }[] = [
-  { type: "single", label: "เปิด 1 ใบ", detail: "ถามสั้นๆ ตอบตรงประเด็น", count: 1 },
-  { type: "three", label: "เปิด 3 ใบ", detail: "อดีต · ปัจจุบัน · อนาคต", count: 3 },
+  {
+    type: "single",
+    label: "เปิด 1 ใบ",
+    detail: "ถามสั้นๆ ตอบตรงประเด็น",
+    count: 1,
+  },
+  {
+    type: "three",
+    label: "เปิด 3 ใบ",
+    detail: "อดีต · ปัจจุบัน · อนาคต",
+    count: 3,
+  },
 ];
 
-/** สับไพ่แล้วหยิบตามจำนวนที่ต้องการ พร้อมสุ่มว่าไพ่ตั้งตรงหรือกลับหัว */
-function drawCards(count: number): DrawnCard[] {
-  const deck = [...TAROT_DECK];
-  for (let i = deck.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [deck[i], deck[j]] = [deck[j], deck[i]];
-  }
+/** ระยะเวลาที่โชว์แอนิเมชันสับไพ่ ก่อนจะแจกไพ่ชุดใหม่ */
+const SHUFFLE_MS = 750;
 
-  return deck.slice(0, count).map((card, index) => ({
-    card,
-    reversed: Math.random() < 0.35,
-    position: count === 1 ? "คำตอบ" : THREE_CARD_POSITIONS[index],
-  }));
-}
+type Phase = "idle" | "shuffling" | "ready";
 
 export function TarotReader() {
   const [spread, setSpread] = useState<TarotSpreadType>("single");
+  const [phase, setPhase] = useState<Phase>("idle");
   const [drawn, setDrawn] = useState<DrawnCard[] | null>(null);
   const [flipped, setFlipped] = useState<Set<number>>(new Set());
+  const [shuffleCount, setShuffleCount] = useState(0);
 
-  function startReading(nextSpread: TarotSpreadType) {
-    const config = SPREADS.find((item) => item.type === nextSpread);
-    if (!config) return;
+  const cardCount =
+    SPREADS.find((item) => item.type === spread)?.count ?? 1;
 
+  /** เริ่มสับไพ่ ไพ่ชุดใหม่จะถูกแจกหลังแอนิเมชันจบ */
+  function startShuffle(nextSpread: TarotSpreadType) {
+    if (phase === "shuffling") return;
     setSpread(nextSpread);
-    setDrawn(drawCards(config.count));
     setFlipped(new Set());
+    setShuffleCount((current) => current + 1);
+    setPhase("shuffling");
   }
+
+  useEffect(() => {
+    if (phase !== "shuffling") return;
+
+    const timer = window.setTimeout(() => {
+      setDrawn(drawCards(cardCount));
+      setPhase("ready");
+    }, SHUFFLE_MS);
+
+    return () => window.clearTimeout(timer);
+  }, [phase, cardCount]);
 
   function flipCard(index: number) {
     setFlipped((current) => {
@@ -57,23 +74,30 @@ export function TarotReader() {
     });
   }
 
+  const isShuffling = phase === "shuffling";
   const allFlipped = drawn !== null && flipped.size === drawn.length;
 
   return (
     <>
       {/* เลือกรูปแบบการเปิดไพ่ */}
       <section className="rounded-blob border border-line bg-card/80 p-5 shadow-sm sm:p-6">
-        <h2 className="font-cute text-xl text-ink">
-          ตั้งคำถามในใจ แล้วเลือกวิธีเปิดไพ่
-        </h2>
+        <div className="flex flex-wrap items-baseline justify-between gap-2">
+          <h2 className="font-cute text-xl text-ink">
+            ตั้งคำถามในใจ แล้วเลือกวิธีเปิดไพ่
+          </h2>
+          <span className="rounded-full bg-lilac/60 px-3 py-1 text-xs text-ink">
+            สำรับเต็ม {DECK_SIZE} ใบ
+          </span>
+        </div>
 
         <div className="mt-3 grid gap-3 sm:grid-cols-2">
           {SPREADS.map((item) => (
             <button
               key={item.type}
               type="button"
-              onClick={() => startReading(item.type)}
-              className={`rounded-2xl border p-4 text-left transition hover:-translate-y-0.5 ${
+              onClick={() => startShuffle(item.type)}
+              disabled={isShuffling}
+              className={`rounded-2xl border p-4 text-left transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-70 ${
                 spread === item.type && drawn
                   ? "border-transparent bg-sky-deep text-white shadow-sm"
                   : "border-line bg-card text-ink hover:border-sky-deep"
@@ -82,7 +106,9 @@ export function TarotReader() {
               <p className="font-cute text-xl">{item.label}</p>
               <p
                 className={`text-xs ${
-                  spread === item.type && drawn ? "text-white/80" : "text-ink-soft"
+                  spread === item.type && drawn
+                    ? "text-white/80"
+                    : "text-ink-soft"
                 }`}
               >
                 {item.detail}
@@ -93,54 +119,92 @@ export function TarotReader() {
       </section>
 
       {/* สำรับไพ่ */}
-      {drawn && (
+      {(drawn || isShuffling) && (
         <section className="mt-4 rounded-blob border border-line bg-card/80 p-5 shadow-sm sm:p-6">
-          <p className="text-center text-sm text-ink-soft">
-            {allFlipped ? "อ่านคำทำนายด้านล่างได้เลย" : "แตะที่ไพ่เพื่อเปิด"}
+          <p
+            role="status"
+            aria-live="polite"
+            className="text-center text-sm text-ink-soft"
+          >
+            {isShuffling
+              ? "🔀 กำลังสับไพ่…"
+              : allFlipped
+                ? "อ่านคำทำนายด้านล่างได้เลย"
+                : "แตะที่ไพ่เพื่อเปิด"}
           </p>
 
           <div
             className={`mt-4 grid justify-center gap-3 ${
-              drawn.length === 1 ? "grid-cols-1" : "grid-cols-3"
+              cardCount === 1 ? "grid-cols-1" : "grid-cols-3"
             }`}
           >
-            {drawn.map((item, index) => (
-              <div key={`${item.card.id}-${index}`} className="text-center">
-                <p className="mb-1.5 text-xs text-ink-soft">{item.position}</p>
+            {Array.from({ length: cardCount }).map((_, index) => {
+              const item = drawn?.[index];
+              const position =
+                item?.position ??
+                (cardCount === 1 ? "คำตอบ" : ["อดีต", "ปัจจุบัน", "อนาคต"][index]);
 
-                <button
-                  type="button"
-                  onClick={() => flipCard(index)}
-                  aria-label={
-                    flipped.has(index)
-                      ? `ไพ่${item.card.name}`
-                      : `เปิดไพ่ตำแหน่ง${item.position}`
-                  }
-                  className="card-scene mx-auto block aspect-[2/3] w-full max-w-[168px]"
-                >
-                  <div
-                    className={`card-inner ${flipped.has(index) ? "is-flipped" : ""}`}
+              return (
+                <div key={`slot-${index}`} className="text-center">
+                  <p className="mb-1.5 text-xs text-ink-soft">{position}</p>
+
+                  <button
+                    type="button"
+                    disabled={isShuffling || !item}
+                    onClick={() => flipCard(index)}
+                    aria-label={
+                      isShuffling
+                        ? "กำลังสับไพ่"
+                        : flipped.has(index) && item
+                          ? `ไพ่${item.card.name}`
+                          : `เปิดไพ่ตำแหน่ง${position}`
+                    }
+                    className={`card-scene mx-auto block aspect-[2/3] w-full max-w-[168px] ${
+                      isShuffling ? "animate-shuffle" : ""
+                    }`}
+                    style={
+                      isShuffling
+                        ? { animationDelay: `${index * 90}ms` }
+                        : undefined
+                    }
                   >
-                    <CardBack />
-                    <CardFront drawn={item} />
-                  </div>
-                </button>
-              </div>
-            ))}
+                    <div
+                      className={`card-inner ${
+                        flipped.has(index) && item ? "is-flipped" : ""
+                      }`}
+                    >
+                      <CardBack />
+                      {item && <CardFront drawn={item} />}
+                    </div>
+                  </button>
+                </div>
+              );
+            })}
           </div>
 
-          <button
-            type="button"
-            onClick={() => startReading(spread)}
-            className="mx-auto mt-5 block rounded-full border border-line px-5 py-2.5 text-sm text-ink-soft transition hover:border-sky-deep hover:text-ink"
-          >
-            🔄 สับไพ่ใหม่
-          </button>
+          <div className="mt-5 text-center">
+            <button
+              type="button"
+              onClick={() => startShuffle(spread)}
+              disabled={isShuffling}
+              className="rounded-full border border-line px-5 py-2.5 text-sm text-ink-soft transition hover:border-sky-deep hover:text-ink disabled:cursor-not-allowed disabled:opacity-70"
+            >
+              {isShuffling ? "🔀 กำลังสับไพ่…" : "🔄 สับไพ่ใหม่"}
+            </button>
+
+            {shuffleCount > 0 && (
+              <p className="mt-2 text-xs text-ink-soft">
+                {isShuffling
+                  ? "กำลังสับ…"
+                  : `✨ สับไพ่แล้ว ${shuffleCount} ครั้ง`}
+              </p>
+            )}
+          </div>
         </section>
       )}
 
       {/* คำทำนาย */}
-      {drawn && flipped.size > 0 && (
+      {drawn && !isShuffling && flipped.size > 0 && (
         <section className="mt-4 space-y-3">
           {drawn.map((item, index) =>
             flipped.has(index) ? (
@@ -150,8 +214,13 @@ export function TarotReader() {
               >
                 <div className="flex items-start gap-3">
                   <span
-                    className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-sky text-2xl"
+                    className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-2xl"
                     aria-hidden
+                    style={{
+                      backgroundColor: item.card.suit
+                        ? `${SUIT_INFO[item.card.suit].hex}66`
+                        : undefined,
+                    }}
                   >
                     {item.card.symbol}
                   </span>
@@ -168,7 +237,12 @@ export function TarotReader() {
                         </span>
                       )}
                     </h3>
-                    <p className="text-xs text-ink-soft">{item.card.nameEn}</p>
+                    <p className="text-xs text-ink-soft">
+                      {item.card.nameEn} ·{" "}
+                      {item.card.suit
+                        ? `ชุด${SUIT_INFO[item.card.suit].label} ธาตุ${SUIT_INFO[item.card.suit].element}`
+                        : "ไพ่ชุดใหญ่"}
+                    </p>
                   </div>
                 </div>
 
@@ -212,8 +286,16 @@ function CardBack() {
 }
 
 function CardFront({ drawn }: { drawn: DrawnCard }) {
+  const suitInfo = drawn.card.suit ? SUIT_INFO[drawn.card.suit] : null;
+
   return (
-    <div className="card-face card-face--back flex flex-col items-center justify-center border-2 border-lilac-deep bg-card p-3 text-center shadow-md">
+    <div
+      className="card-face card-face--back flex flex-col items-center justify-center border-2 p-3 text-center shadow-md"
+      style={{
+        borderColor: suitInfo?.hex ?? "#A98FEE",
+        backgroundColor: suitInfo ? `${suitInfo.hex}26` : "#FFFFFF",
+      }}
+    >
       <span
         className="text-4xl"
         aria-hidden

@@ -1,7 +1,13 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { CuteCharacter } from "@/components/CuteCharacter";
-import { getDailyCharm, getLuckyDay, getOutfitOfTheDay } from "@/lib/lucky-color";
+import {
+  OUTFIT_STYLE_LABELS,
+  getDailyCharm,
+  getDailyLooks,
+  getLuckyDay,
+  type OutfitLook,
+} from "@/lib/lucky-color";
 import { getCurrentUser } from "@/lib/supabase/server";
 import { formatThaiFullDate, getThaiToday } from "@/lib/thai-date";
 
@@ -39,7 +45,8 @@ export default async function HomePage() {
 
   const today = getThaiToday();
   const day = getLuckyDay(today.weekday);
-  const outfit = getOutfitOfTheDay(day, today.isoDate);
+  const looks = getDailyLooks(day, today.isoDate);
+  const featuredLook = looks.find((look) => look.isFeatured) ?? looks[0];
   const charm = getDailyCharm(today.isoDate);
 
   const accent = day.lucky[0]?.hex ?? day.main.hex;
@@ -65,7 +72,7 @@ export default async function HomePage() {
             <CuteCharacter
               mainColor={day.main.hex}
               accentColor={accent}
-              style={outfit.style}
+              style={featuredLook.style}
               className="animate-float-soft w-full"
             />
           </div>
@@ -110,29 +117,18 @@ export default async function HomePage() {
 
       {/* ---------- ไอเดียแต่งตัว ---------- */}
       <section className="mt-5 rounded-blob border border-line bg-card/80 p-5 shadow-sm sm:p-7">
-        <h2 className="font-cute text-2xl text-ink">
-          👗 แต่งตัวยังไงดีวันนี้
-        </h2>
+        <h2 className="font-cute text-2xl text-ink">👗 แต่งตัวยังไงดีวันนี้</h2>
+        <p className="text-sm text-ink-soft">
+          3 ลุคที่ใช้สีมงคลของวัน{day.name} เลือกลุคที่ชอบแล้วแต่งตามได้เลย
+        </p>
 
-        <div className="mt-3 rounded-2xl bg-blossom/40 p-4">
-          <p className="font-cute text-xl text-ink">{outfit.title}</p>
-          <p className="mt-1 text-sm leading-relaxed text-ink-soft">
-            {outfit.detail}
-          </p>
-
-          <ul className="mt-3 flex flex-wrap gap-2">
-            {outfit.items.map((item) => (
-              <li
-                key={item}
-                className="rounded-full bg-card px-3 py-1.5 text-xs text-ink shadow-sm"
-              >
-                {item}
-              </li>
-            ))}
-          </ul>
+        <div className="mt-4 grid gap-3 sm:grid-cols-3">
+          {looks.map((look) => (
+            <LookCard key={look.title} look={look} />
+          ))}
         </div>
 
-        <div className="mt-3 grid gap-3 sm:grid-cols-3">
+        <div className="mt-4 grid gap-3 sm:grid-cols-3">
           <CharmCard emoji="🍀" label="ของนำโชค" value={charm.charm} />
           <CharmCard emoji="🧭" label="ทิศมงคล" value={charm.direction} />
           <CharmCard
@@ -163,6 +159,73 @@ export default async function HomePage() {
         ))}
       </section>
     </main>
+  );
+}
+
+/** การ์ดลุคหนึ่งลุค พร้อมตัวการ์ตูนใส่ชุดตามลุคนั้นจริงๆ */
+function LookCard({ look }: { look: OutfitLook }) {
+  return (
+    <article
+      className="relative flex flex-col rounded-2xl border bg-card p-4"
+      style={{
+        borderColor: look.isFeatured ? look.color.hex : undefined,
+        borderWidth: look.isFeatured ? 2 : undefined,
+      }}
+    >
+      {look.isFeatured && (
+        <span
+          className="absolute -top-2.5 left-4 rounded-full px-2.5 py-0.5 text-[11px] font-semibold text-ink shadow-sm"
+          style={{ backgroundColor: look.color.hex }}
+        >
+          ⭐ แนะนำวันนี้
+        </span>
+      )}
+
+      <div
+        className="mt-1 rounded-xl py-2"
+        style={{ backgroundColor: `${look.color.hex}24` }}
+      >
+        <CuteCharacter
+          mainColor={look.color.hex}
+          accentColor={look.accent.hex}
+          style={look.style}
+          showSparkles={false}
+          className="mx-auto h-36 w-auto"
+        />
+      </div>
+
+      <p className="mt-3 text-xs text-ink-soft">
+        {OUTFIT_STYLE_LABELS[look.style]}
+      </p>
+      <p className="font-cute text-lg leading-snug text-ink">{look.title}</p>
+      <p className="mt-1 text-sm leading-relaxed text-ink-soft">
+        {look.detail}
+      </p>
+
+      <ul className="mt-3 space-y-1.5">
+        {look.items.map((item) => (
+          <li key={item} className="flex items-start gap-1.5 text-xs text-ink">
+            <span aria-hidden>·</span>
+            <span>{item}</span>
+          </li>
+        ))}
+      </ul>
+
+      {/* สีที่ใช้ในลุคนี้ ดันไปชิดล่างเพื่อให้การ์ดทั้งสามใบจบเสมอกัน */}
+      <div className="mt-auto flex items-center gap-2 pt-3">
+        <span
+          className="h-5 w-5 rounded-full border border-line"
+          style={{ backgroundColor: look.color.hex }}
+        />
+        <span
+          className="h-5 w-5 rounded-full border border-line"
+          style={{ backgroundColor: look.accent.hex }}
+        />
+        <span className="text-[11px] text-ink-soft">
+          {look.color.name} + {look.accent.name}
+        </span>
+      </div>
+    </article>
   );
 }
 
