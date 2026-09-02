@@ -68,14 +68,14 @@ export default async function HomePage() {
         <p className="mt-1 text-sm text-ink-soft">{day.blessing}</p>
 
         <div className="mt-5 grid items-center gap-5 sm:grid-cols-[minmax(0,190px)_minmax(0,1fr)]">
-          {/* ตัวการ์ตูนสูงและผอมกว่าเดิม จึงกำหนดด้วยความสูงแทนความกว้าง
-              ไม่งั้นการ์ดจะยืดสูงเกินไป */}
+          {/* กำหนดขนาดด้วยความสูง เพราะสัดส่วนตัวการ์ตูนอาจเปลี่ยนได้
+              ถ้ากำหนดด้วยความกว้างแล้ววันหนึ่งไปแก้ viewBox การ์ดจะยืดเสียทรง */}
           <div className="flex justify-center">
             <CuteCharacter
               mainColor={day.main.hex}
               accentColor={accent}
               style={featuredLook.style}
-              className="animate-float-soft h-72 w-auto sm:h-80"
+              className="animate-float-soft h-56 w-auto sm:h-64"
             />
           </div>
 

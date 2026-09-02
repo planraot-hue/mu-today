@@ -68,7 +68,7 @@ export function BirthFortune({ todayKey }: { todayKey: string }) {
               mainColor={luckyDay.main.hex}
               accentColor={luckyDay.lucky[0]?.hex ?? luckyDay.main.hex}
               style="dress"
-              className="animate-float-soft h-60 w-auto sm:h-64"
+              className="animate-float-soft h-44 w-auto sm:h-48"
             />
           </div>
 
