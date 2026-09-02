@@ -63,12 +63,12 @@ export function BirthFortune({ todayKey }: { todayKey: string }) {
         </p>
 
         <div className="mt-4 grid items-center gap-4 sm:grid-cols-[minmax(0,150px)_minmax(0,1fr)]">
-          <div className="mx-auto w-32 sm:w-full">
+          <div className="flex justify-center">
             <CuteCharacter
               mainColor={luckyDay.main.hex}
               accentColor={luckyDay.lucky[0]?.hex ?? luckyDay.main.hex}
               style="dress"
-              className="animate-float-soft w-full"
+              className="animate-float-soft h-60 w-auto sm:h-64"
             />
           </div>
 

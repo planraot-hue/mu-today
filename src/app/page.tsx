@@ -68,12 +68,14 @@ export default async function HomePage() {
         <p className="mt-1 text-sm text-ink-soft">{day.blessing}</p>
 
         <div className="mt-5 grid items-center gap-5 sm:grid-cols-[minmax(0,190px)_minmax(0,1fr)]">
-          <div className="mx-auto w-40 sm:w-full">
+          {/* ตัวการ์ตูนสูงและผอมกว่าเดิม จึงกำหนดด้วยความสูงแทนความกว้าง
+              ไม่งั้นการ์ดจะยืดสูงเกินไป */}
+          <div className="flex justify-center">
             <CuteCharacter
               mainColor={day.main.hex}
               accentColor={accent}
               style={featuredLook.style}
-              className="animate-float-soft w-full"
+              className="animate-float-soft h-72 w-auto sm:h-80"
             />
           </div>
 
@@ -190,7 +192,7 @@ function LookCard({ look }: { look: OutfitLook }) {
           accentColor={look.accent.hex}
           style={look.style}
           showSparkles={false}
-          className="mx-auto h-36 w-auto"
+          className="mx-auto h-52 w-auto"
         />
       </div>
 
