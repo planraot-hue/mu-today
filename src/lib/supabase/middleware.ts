@@ -62,6 +62,15 @@ export async function updateSession(request: NextRequest) {
     return redirectWithCookies(request, "/", supabaseResponse);
   }
 
+  // API ต้องตอบเป็น JSON ไม่ใช่ redirect
+  // ไม่งั้น fetch() จะได้ HTML ของหน้า login กลับไปแทน error ที่อ่านออก
+  if (!canView && pathname.startsWith("/api/")) {
+    return NextResponse.json(
+      { error: "กรุณาเข้าสู่ระบบหรือเข้าแบบผู้เยี่ยมชมก่อน" },
+      { status: 401 },
+    );
+  }
+
   // ยังไม่ล็อกอินและกำลังจะเข้าหน้าที่ต้องล็อกอิน
   if (!canView && !isPublicPath(pathname)) {
     return redirectWithCookies(

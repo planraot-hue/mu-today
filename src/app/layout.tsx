@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Itim, Mali } from "next/font/google";
+import { ChatWidget } from "@/components/ChatWidget";
 import { SiteHeader } from "@/components/SiteHeader";
 import { getViewer } from "@/lib/viewer";
 import "./globals.css";
@@ -58,6 +59,8 @@ export default async function RootLayout({
             📚 ดูที่มาของข้อมูลแต่ละฟีเจอร์
           </a>
         </footer>
+
+        <ChatWidget />
       </body>
     </html>
   );
