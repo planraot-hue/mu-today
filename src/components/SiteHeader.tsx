@@ -4,15 +4,22 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { exitGuestAction, signOutAction } from "@/app/actions";
 
+/**
+ * เมนู 8 อันวางเป็นตาราง 4x2 บนมือถือ และเรียงเดียว 8 ช่องบนจอใหญ่
+ * จึงไม่ต้องเลื่อนแนวนอนอีกต่อไป
+ *
+ * tint = สีพื้นตอนที่ยังไม่ถูกเลือก ทำให้แถวเมนูดูมีสีสันแทนที่จะเป็นปุ่มขาวเรียงกัน
+ * grad = สีไล่ระดับตอนถูกเลือก
+ */
 const NAV_ITEMS = [
-  { href: "/", label: "สีมงคล", emoji: "🎨", grad: "grad-pink" },
-  { href: "/birth", label: "วันเกิด", emoji: "🎂", grad: "grad-sun" },
-  { href: "/horoscope", label: "ราศี", emoji: "🔮", grad: "grad-violet" },
-  { href: "/chinese", label: "ดวงจีน", emoji: "🧧", grad: "grad-sun" },
-  { href: "/love", label: "สมพงศ์", emoji: "💞", grad: "grad-pink" },
-  { href: "/siamsi", label: "เซียมซี", emoji: "🥢", grad: "grad-mint" },
-  { href: "/tarot", label: "ทาโรต์", emoji: "🃏", grad: "grad-sky" },
-  { href: "/phrom-yan", label: "พรหมญาณ", emoji: "🔯", grad: "grad-violet" },
+  { href: "/", label: "สีมงคล", emoji: "🎨", grad: "grad-pink", tint: "bg-blossom/45" },
+  { href: "/birth", label: "วันเกิด", emoji: "🎂", grad: "grad-sun", tint: "bg-butter/55" },
+  { href: "/horoscope", label: "ราศี", emoji: "🔮", grad: "grad-violet", tint: "bg-lilac/50" },
+  { href: "/chinese", label: "ดวงจีน", emoji: "🧧", grad: "grad-sun", tint: "bg-butter/55" },
+  { href: "/love", label: "สมพงศ์", emoji: "💞", grad: "grad-pink", tint: "bg-blossom/45" },
+  { href: "/siamsi", label: "เซียมซี", emoji: "🥢", grad: "grad-mint", tint: "bg-mint/55" },
+  { href: "/tarot", label: "ทาโรต์", emoji: "🃏", grad: "grad-sky", tint: "bg-sky/55" },
+  { href: "/phrom-yan", label: "พรหมญาณ", emoji: "🔯", grad: "grad-violet", tint: "bg-lilac/50" },
 ];
 
 export function SiteHeader({
@@ -79,7 +86,7 @@ export function SiteHeader({
       </div>
 
       <nav className="mt-4">
-        <ul className="flex gap-2 overflow-x-auto pb-1">
+        <ul className="grid grid-cols-4 gap-1.5 sm:grid-cols-8 sm:gap-2">
           {NAV_ITEMS.map((item) => {
             const isActive =
               item.href === "/"
@@ -87,18 +94,20 @@ export function SiteHeader({
                 : pathname.startsWith(item.href);
 
             return (
-              <li key={item.href} className="shrink-0">
+              <li key={item.href}>
                 <Link
                   href={item.href}
                   aria-current={isActive ? "page" : undefined}
-                  className={`flex items-center gap-1.5 rounded-full border px-4 py-2 text-sm transition ${
+                  className={`flex flex-col items-center justify-center gap-0.5 rounded-2xl border px-1 py-2 text-center transition hover:-translate-y-0.5 ${
                     isActive
-                      ? item.grad
-                      : "border-line bg-card/70 text-ink-soft hover:border-blossom hover:text-ink"
+                      ? `${item.grad} scale-[1.03] shadow-md`
+                      : `border-line ${item.tint} text-ink hover:shadow-sm`
                   }`}
                 >
-                  <span aria-hidden>{item.emoji}</span>
-                  {item.label}
+                  <span className="text-xl leading-none" aria-hidden>
+                    {item.emoji}
+                  </span>
+                  <span className="text-[11px] leading-tight">{item.label}</span>
                 </Link>
               </li>
             );
