@@ -18,6 +18,38 @@ const SUGGESTIONS = [
 const GREETING =
   "สวัสดีค่ะ น้องมูเองนะคะ 🔮 ถามได้เลยว่าเว็บนี้ใช้ยังไง หรืออยากรู้เรื่องสีมงคล ทักษา ราศี ดวงจีน อะไรก็ได้ค่ะ";
 
+const TIP_KEY = "mutoday:chat-tip-seen";
+
+/** หน้าน้องมูแบบย่อ วาดด้วย SVG ให้เข้าชุดกับตัวการ์ตูนในหน้าเว็บ */
+function MuFace({ className = "h-8 w-8" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 40 40" className={className} aria-hidden>
+      {/* ผมด้านหลัง */}
+      <circle cx="20" cy="20" r="17" fill="#5C4A5E" />
+      {/* หน้า */}
+      <circle cx="20" cy="21" r="14" fill="#FFE0CC" />
+      {/* หน้าม้า */}
+      <path d="M6 18 A14 14 0 0 1 34 18 Q27 12 20 13 Q13 12 6 18 Z" fill="#5C4A5E" />
+      {/* ตา */}
+      <ellipse cx="15" cy="22" rx="1.9" ry="2.3" fill="#4A3B52" />
+      <ellipse cx="25" cy="22" rx="1.9" ry="2.3" fill="#4A3B52" />
+      {/* แก้ม */}
+      <ellipse cx="10.5" cy="25" rx="2.6" ry="1.7" fill="#FFAFC5" opacity="0.8" />
+      <ellipse cx="29.5" cy="25" rx="2.6" ry="1.7" fill="#FFAFC5" opacity="0.8" />
+      {/* ปาก */}
+      <path
+        d="M17.5 26.5 Q20 29 22.5 26.5"
+        stroke="#4A3B52"
+        strokeWidth="1.4"
+        strokeLinecap="round"
+        fill="none"
+      />
+      {/* ดาวข้างหัว */}
+      <circle cx="33" cy="9" r="2.4" fill="#F0B429" />
+    </svg>
+  );
+}
+
 export function ChatWidget() {
   const pathname = usePathname();
 
@@ -26,9 +58,36 @@ export function ChatWidget() {
   const [input, setInput] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showTip, setShowTip] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  /**
+   * โผล่ฟองทักทายหลังเข้าเว็บสักพัก แล้วจำไว้ว่าเคยโผล่แล้วในการเข้าเว็บครั้งนี้
+   * ใช้ sessionStorage ไม่ใช่ localStorage เพราะอยากให้ทักทายใหม่เมื่อกลับมาวันหลัง
+   */
+  useEffect(() => {
+    let dismissed = false;
+    try {
+      dismissed = sessionStorage.getItem(TIP_KEY) === "1";
+    } catch {
+      // บางเบราว์เซอร์ปิด storage ไว้ — ถือว่ายังไม่เคยเห็น
+    }
+    if (dismissed) return;
+
+    const timer = window.setTimeout(() => setShowTip(true), 1800);
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  function dismissTip() {
+    setShowTip(false);
+    try {
+      sessionStorage.setItem(TIP_KEY, "1");
+    } catch {
+      // เช่นเดียวกับด้านบน
+    }
+  }
 
   // เลื่อนลงล่างสุดทุกครั้งที่มีข้อความใหม่หรือข้อความไหลเพิ่ม
   useEffect(() => {
@@ -112,18 +171,77 @@ export function ChatWidget() {
 
   return (
     <>
+      {/* ฟองทักทาย โผล่ครั้งเดียวต่อการเข้าเว็บหนึ่งครั้ง */}
+      {showTip && !isOpen && (
+        <div className="animate-chat-tip fixed bottom-24 right-5 z-50 max-w-[15rem]">
+          <div className="relative rounded-2xl rounded-br-sm border border-line bg-card px-4 py-3 shadow-lg">
+            <button
+              type="button"
+              onClick={dismissTip}
+              aria-label="ปิดคำทักทาย"
+              className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full border border-line bg-card text-xs text-ink-soft shadow-sm transition hover:text-ink"
+            >
+              ✕
+            </button>
+
+            <p className="text-sm leading-snug text-ink">
+              สวัสดีค่ะ 👋 หาอะไรไม่เจอ หรืออยากรู้ว่าสีมงคลวันนี้คืออะไร
+              <br />
+              <span className="font-semibold text-lilac-deep">ถามน้องมูได้เลย</span>
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* ปุ่มลอย */}
-      <button
-        type="button"
-        onClick={() => setIsOpen((current) => !current)}
-        aria-expanded={isOpen}
-        aria-label={isOpen ? "ปิดแชทผู้ช่วย" : "เปิดแชทผู้ช่วย น้องมู"}
-        className={`fixed bottom-5 right-5 z-50 flex h-14 w-14 items-center justify-center rounded-full text-2xl shadow-lg transition hover:scale-105 ${
-          isOpen ? "bg-card text-ink" : "grad-violet"
-        }`}
-      >
-        <span aria-hidden>{isOpen ? "✕" : "💬"}</span>
-      </button>
+      <div className="fixed bottom-5 right-5 z-50">
+        {/* วงกลมกระเพื่อมด้านหลัง ไม่รับคลิก */}
+        {!isOpen && (
+          <span
+            aria-hidden
+            className="animate-chat-ping pointer-events-none absolute inset-0 rounded-full grad-violet"
+          />
+        )}
+
+        <button
+          type="button"
+          onClick={() => {
+            setIsOpen((current) => !current);
+            dismissTip();
+          }}
+          aria-expanded={isOpen}
+          aria-label={isOpen ? "ปิดแชทผู้ช่วย" : "เปิดแชทกับน้องมู ผู้ช่วยประจำเว็บ"}
+          className={`relative flex items-center gap-2 rounded-full shadow-xl transition hover:scale-105 active:scale-95 ${
+            isOpen
+              ? "h-14 w-14 justify-center border border-line bg-card text-xl text-ink"
+              : "animate-chat-wiggle py-2 pl-2 pr-4 grad-violet"
+          }`}
+        >
+          {isOpen ? (
+            <span aria-hidden>✕</span>
+          ) : (
+            <>
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/90">
+                <MuFace />
+              </span>
+              <span className="text-sm font-semibold leading-tight">
+                ถามน้องมู
+                <span className="block text-[10px] font-normal opacity-90">
+                  ผู้ช่วยประจำเว็บ
+                </span>
+              </span>
+            </>
+          )}
+
+          {/* จุดกะพริบบอกว่าพร้อมคุย */}
+          {!isOpen && (
+            <span
+              aria-hidden
+              className="absolute -right-0.5 -top-0.5 h-3.5 w-3.5 rounded-full border-2 border-white bg-mint-deep"
+            />
+          )}
+        </button>
+      </div>
 
       {/* แผงแชท */}
       {isOpen && (
@@ -132,11 +250,16 @@ export function ChatWidget() {
           className="animate-pop-in fixed bottom-24 right-4 z-50 flex h-[min(30rem,calc(100dvh-8rem))] w-[min(23rem,calc(100vw-2rem))] flex-col overflow-hidden rounded-blob border border-line bg-card shadow-xl"
         >
           <header className="flex items-center justify-between gap-2 border-b border-line px-4 py-3 grad-violet">
-            <div className="min-w-0">
-              <p className="font-cute text-lg leading-tight">น้องมู</p>
-              <p className="truncate text-[11px] opacity-90">
-                ผู้ช่วยประจำเว็บมูทูเดย์
-              </p>
+            <div className="flex min-w-0 items-center gap-2.5">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/90">
+                <MuFace className="h-7 w-7" />
+              </span>
+              <div className="min-w-0">
+                <p className="font-cute text-lg leading-tight">น้องมู</p>
+                <p className="truncate text-[11px] opacity-90">
+                  ผู้ช่วยประจำเว็บมูทูเดย์
+                </p>
+              </div>
             </div>
 
             {messages.length > 0 && (

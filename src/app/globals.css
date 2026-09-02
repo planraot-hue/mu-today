@@ -179,13 +179,72 @@ body {
   animation: shuffle-card 0.38s ease-in-out 2;
 }
 
+/* ---------- ปุ่มแชท ---------- */
+
+/* วงกลมกระเพื่อมออกจากปุ่ม เรียกสายตาโดยไม่ต้องขยับตัวปุ่มเอง */
+@keyframes chat-ping {
+  0% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  70%,
+  100% {
+    transform: scale(1.45);
+    opacity: 0;
+  }
+}
+
+.animate-chat-ping {
+  animation: chat-ping 2.6s cubic-bezier(0.2, 0.6, 0.35, 1) infinite;
+}
+
+/* ปุ่มโยกเบาๆ เป็นจังหวะ ห่างกันพอไม่ให้รำคาญ */
+@keyframes chat-wiggle {
+  0%,
+  88%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  91% {
+    transform: translateY(-4px) rotate(-4deg);
+  }
+  94% {
+    transform: translateY(-2px) rotate(4deg);
+  }
+  97% {
+    transform: translateY(-1px) rotate(-2deg);
+  }
+}
+
+.animate-chat-wiggle {
+  animation: chat-wiggle 6s ease-in-out infinite;
+}
+
+@keyframes chat-tip-in {
+  0% {
+    opacity: 0;
+    transform: translateY(8px) scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-chat-tip {
+  animation: chat-tip-in 0.4s cubic-bezier(0.22, 1.2, 0.36, 1) both;
+}
+
 /* ปิดการเคลื่อนไหวให้คนที่ตั้งค่าลดแอนิเมชันไว้ในระบบ */
 @media (prefers-reduced-motion: reduce) {
   .animate-float-soft,
   .animate-shake-cup,
   .animate-pop-in,
   .animate-twinkle,
-  .animate-shuffle {
+  .animate-shuffle,
+  .animate-chat-ping,
+  .animate-chat-wiggle,
+  .animate-chat-tip {
     animation: none !important;
   }
 }
