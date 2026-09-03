@@ -3,6 +3,7 @@ import { Itim, Mali } from "next/font/google";
 import { ChatWidget } from "@/components/ChatWidget";
 import { PwaSetup } from "@/components/PwaSetup";
 import { SiteHeader } from "@/components/SiteHeader";
+import { getSiteUrl } from "@/lib/site-url";
 import { getViewer } from "@/lib/viewer";
 import "./globals.css";
 
@@ -20,11 +21,32 @@ const itim = Itim({
   display: "swap",
 });
 
+const SITE_NAME = "มูทูเดย์";
+const SITE_TITLE = "มูทูเดย์ · ดูดวงประจำวัน";
+const SITE_DESCRIPTION =
+  "สีมงคลประจำวันจากตำราทักษาปกรณ์ ดวงราศี ดวงจีน ดวงสมพงศ์ เซียมซี ไพ่ทาโรต์ และไพ่พรหมญาณ";
+
 export const metadata: Metadata = {
-  title: "มูทูเดย์ · ดูดวงประจำวัน",
-  description:
-    "สีมงคลประจำวัน ดวงราศีรายวันรายสัปดาห์รายเดือน เสี่ยงเซียมซีวัดดัง 4 ภาค และเปิดไพ่ทาโรต์",
+  // ต้องมี ไม่งั้น og:image จะเป็นลิงก์สัมพัทธ์ซึ่ง LINE ตามไม่ได้
+  metadataBase: getSiteUrl(),
+  title: SITE_TITLE,
+  description: SITE_DESCRIPTION,
   robots: { index: false, follow: false },
+
+  // รูปพรีวิวมาจาก src/app/opengraph-image.tsx โดยอัตโนมัติ
+  openGraph: {
+    type: "website",
+    locale: "th_TH",
+    siteName: SITE_NAME,
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    url: "/",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+  },
   // บอก iOS ให้เปิดแบบเต็มจอเหมือนแอปเมื่อเพิ่มลงหน้าโฮม
   appleWebApp: {
     capable: true,

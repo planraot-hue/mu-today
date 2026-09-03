@@ -28,6 +28,17 @@
 
 ดูเทียบกันได้ที่แถวล่างสุดของ `icon-comparison.png`
 
+## ⚠️ favicon เป็นไฟล์นิ่ง ไม่ได้ตามค่า ICON_STYLE
+
+`src/app/icon.png` เป็นสำเนาของ `icon-crystal-256.png` ในโฟลเดอร์นี้
+ถ้าเปลี่ยน `ICON_STYLE` เป็นลายอื่น **favicon จะไม่เปลี่ยนตาม** ต้องคัดลอกไฟล์ทับเอง
+
+```powershell
+copy docs\icon-preview\icon-<ลาย>-256.png src\app\icon.png
+```
+
+ส่วน apple-icon กับไอคอน 192/512 สร้างจาก `app-icon.tsx` จึงเปลี่ยนตามอัตโนมัติ
+
 ## เปลี่ยนไอคอนที่ใช้จริง
 
 แก้บรรทัดเดียวใน [`src/lib/app-icon.tsx`](../../src/lib/app-icon.tsx)

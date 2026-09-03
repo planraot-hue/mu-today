@@ -377,9 +377,12 @@ function StarIcon() {
 }
 
 /**
- * @param detail ใส่ false สำหรับไอคอนขนาดเล็ก (favicon 32px ลงมา)
- *               จะตัดฐาน ดาว และประกายรอบตัวออก เหลือแต่ลูกแก้วกับจันทร์เสี้ยว
- *               เพราะรายละเอียดพวกนั้นกลายเป็นจุดมั่วตอนย่อ
+ * @param detail ใส่ false เพื่อตัดฐาน ดาว และประกายรอบตัวออก เหลือแต่ลูกแก้ว
+ *               กับจันทร์เสี้ยว เผื่อวันหลังอยากได้ไอคอนที่ทนการย่อมากขึ้น
+ *
+ * หมายเหตุ: ตอนนี้ favicon ใช้ไฟล์นิ่ง src/app/icon.png ไม่ได้สร้างจากที่นี่
+ * จึงยังไม่มีใครส่ง detail=false เข้ามา ส่วน apple-icon กับ manifest 192/512
+ * ยังสร้างจากไฟล์นี้อยู่
  */
 export function AppIconArt({ detail = true }: { detail?: boolean }) {
   if (ICON_STYLE === "crystal") return <CrystalIcon detail={detail} />;

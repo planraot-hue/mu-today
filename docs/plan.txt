@@ -270,3 +270,33 @@
   [DONE] เพิ่มสคริปต์ใน layout ดัก beforeinstallprompt ตั้งแต่ก่อน React ทำงาน
          กันกรณี event ยิงมาก่อนคอมโพเนนต์ mount
   [DONE] ย้ายตรรกะร่วมไป src/lib/pwa.ts ให้ปุ่มกับแถบใช้ชุดเดียวกัน
+
+#รูปพรีวิวตอนแชร์ลิงก์ (Open Graph)
+  [DONE] src/app/opengraph-image.tsx สร้างรูป 1200x630 ตอน request
+         Next.js ใส่เป็น og:image ให้อัตโนมัติตามแบบแผนชื่อไฟล์
+  [DONE] ในรูปมีลูกแก้ว ชื่อเว็บ และรายการฟีเจอร์
+  [DONE] โหลดฟอนต์ Mali จาก Google Fonts มาให้ satori เพราะ satori ไม่มีฟอนต์ติดมา
+         ถ้าไม่โหลด ตัวอักษรไทยจะกลายเป็นสี่เหลี่ยมว่าง
+         ใช้พารามิเตอร์ text ตัดเฉพาะตัวอักษรที่ใช้จริง ไฟล์จึงเล็ก
+  [DONE] โหลดฟอนต์ไม่สำเร็จก็ยังได้รูป แค่เหลือลูกแก้วอย่างเดียว ไม่พังทั้ง route
+  [DONE] src/lib/site-url.ts หา metadataBase จาก NEXT_PUBLIC_SITE_URL
+         หรือ VERCEL_PROJECT_PRODUCTION_URL หรือ VERCEL_URL
+         ต้องมี ไม่งั้น og:image เป็นลิงก์สัมพัทธ์ซึ่ง LINE ตามไม่ได้
+  [DONE] ใส่ openGraph กับ twitter metadata ใน layout จึงมีผลทุกหน้ารวมถึง /login
+
+  จุดที่พลาดง่ายและแก้ไปแล้ว:
+  - ตัวเก็บข้อมูลของ LINE ไม่มีคุกกี้ พอเข้า / จะโดนเด้งไป /login
+    แก้โดยใส่ metadata ไว้ที่ layout ทุกหน้าจึงมี og: ครบเหมือนกัน
+  - /opengraph-image ต้องยกเว้นจาก matcher ของ middleware
+    ไม่งั้นโหลดรูปไม่ได้เลย พรีวิวจะขึ้นแต่ตัวหนังสือ
+
+  ยังไม่ได้แก้ ถ้าพรีวิวไม่ขึ้นให้ลองก่อน:
+  - layout ยังตั้ง robots noindex อยู่ ถ้าตัวเก็บข้อมูลของ LINE เคารพค่านี้
+    ต้องเอาออกก่อน (แต่จะทำให้เว็บถูก search engine เก็บด้วย)
+
+#favicon ใช้ไฟล์นิ่ง
+  [DONE] src/app/icon.png คัดลอกจาก docs/icon-preview/icon-crystal-256.png
+         ตามที่ผู้ใช้เลือก แล้วลบ src/app/icon.tsx ออกเพราะสร้าง /icon ชนกัน
+  ข้อแลกเปลี่ยน: favicon ไม่เปลี่ยนตามค่า ICON_STYLE อีกแล้ว
+  ถ้าสลับลาย ต้องคัดลอกไฟล์ทับเอง (เขียนวิธีไว้ใน docs/icon-preview/README.md)
+  ส่วน apple-icon กับไอคอน 192/512 ยังสร้างจาก app-icon.tsx จึงเปลี่ยนตามอัตโนมัติ
