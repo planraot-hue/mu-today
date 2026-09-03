@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Itim, Mali } from "next/font/google";
 import { ChatWidget } from "@/components/ChatWidget";
+import { PwaSetup } from "@/components/PwaSetup";
 import { SiteHeader } from "@/components/SiteHeader";
 import { getViewer } from "@/lib/viewer";
 import "./globals.css";
@@ -24,6 +25,12 @@ export const metadata: Metadata = {
   description:
     "สีมงคลประจำวัน ดวงราศีรายวันรายสัปดาห์รายเดือน เสี่ยงเซียมซีวัดดัง 4 ภาค และเปิดไพ่ทาโรต์",
   robots: { index: false, follow: false },
+  // บอก iOS ให้เปิดแบบเต็มจอเหมือนแอปเมื่อเพิ่มลงหน้าโฮม
+  appleWebApp: {
+    capable: true,
+    title: "มูทูเดย์",
+    statusBarStyle: "default",
+  },
 };
 
 export const viewport: Viewport = {
@@ -61,6 +68,7 @@ export default async function RootLayout({
         </footer>
 
         <ChatWidget />
+        <PwaSetup />
       </body>
     </html>
   );

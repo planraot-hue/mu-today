@@ -5,7 +5,13 @@ import { SUPABASE_ANON_KEY, SUPABASE_URL } from "./env";
 import { GUEST_COOKIE, GUEST_COOKIE_VALUE } from "@/lib/viewer";
 
 /** เส้นทางที่เข้าได้โดยไม่ต้องล็อกอิน */
-const PUBLIC_PATHS = ["/login", "/auth/callback", "/auth/auth-error"];
+const PUBLIC_PATHS = [
+  "/login",
+  "/auth/callback",
+  "/auth/auth-error",
+  // service worker แคชหน้านี้ตอนติดตั้ง ซึ่งอาจยังไม่มีคุกกี้
+  "/offline",
+];
 
 function isPublicPath(pathname: string): boolean {
   return PUBLIC_PATHS.some(
