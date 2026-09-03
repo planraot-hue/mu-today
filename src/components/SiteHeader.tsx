@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { exitGuestAction, signOutAction } from "@/app/actions";
+import { InstallAppButton } from "@/components/InstallAppButton";
 
 /**
  * เมนู 8 อันวางเป็นตาราง 4x2 บนมือถือ และเรียงเดียว 8 ช่องบนจอใหญ่
@@ -47,6 +48,8 @@ export function SiteHeader({
         </Link>
 
         <div className="flex min-w-0 items-center gap-2">
+          <InstallAppButton />
+
           {isGuest ? (
             <>
               <span className="hidden rounded-full bg-butter/70 px-3 py-1 text-xs text-ink sm:inline">

@@ -49,6 +49,15 @@ export default async function RootLayout({
   return (
     <html lang="th" className={`${mali.variable} ${itim.variable}`}>
       <body className="min-h-dvh font-sans antialiased">
+        {/* ดัก beforeinstallprompt ไว้ตั้งแต่ก่อน React ทำงาน
+            เบราว์เซอร์ยิง event นี้ครั้งเดียว ถ้าพลาดคือพลาดเลย */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();window.__muInstallPrompt=e;});",
+          }}
+        />
+
         <SiteHeader
           email={viewer.user?.email ?? null}
           isGuest={viewer.isGuest}
