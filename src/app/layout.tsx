@@ -33,7 +33,8 @@ export const metadata: Metadata = {
   description: SITE_DESCRIPTION,
   robots: { index: false, follow: false },
 
-  // รูปพรีวิวมาจาก src/app/opengraph-image.tsx โดยอัตโนมัติ
+  // รูปพรีวิวเป็นไฟล์นิ่งใน public/ ไม่ได้สร้างตอน request
+  // สร้างใหม่ด้วย docs/icon-preview/render-og.ps1
   openGraph: {
     type: "website",
     locale: "th_TH",
@@ -41,11 +42,20 @@ export const metadata: Metadata = {
     title: SITE_TITLE,
     description: SITE_DESCRIPTION,
     url: "/",
+    images: [
+      {
+        url: "/og.png",
+        width: 1200,
+        height: 630,
+        alt: "มูทูเดย์ ดูดวงประจำวัน",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: SITE_TITLE,
     description: SITE_DESCRIPTION,
+    images: ["/og.png"],
   },
   // บอก iOS ให้เปิดแบบเต็มจอเหมือนแอปเมื่อเพิ่มลงหน้าโฮม
   appleWebApp: {

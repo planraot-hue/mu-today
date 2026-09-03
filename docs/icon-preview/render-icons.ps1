@@ -1,4 +1,4 @@
-# เรนเดอร์ไอคอนเป็นไฟล์ PNG จริง ด้วย GDI+ ของ .NET
+﻿# เรนเดอร์ไอคอนเป็นไฟล์ PNG จริง ด้วย GDI+ ของ .NET
 #
 # สคริปต์นี้ทำสำเนาค่าสีและสัดส่วนจาก src/lib/app-icon.tsx ไว้เอง
 # ถ้าแก้ลายในไฟล์นั้น ต้องแก้ในนี้ให้ตรงกันด้วย ไม่งั้นตัวอย่างจะไม่ตรงกับของจริง
@@ -315,3 +315,37 @@ $g.Dispose()
 $sheet.Save((Join-Path $outDir 'icon-comparison.png'), [System.Drawing.Imaging.ImageFormat]::Png)
 $sheet.Dispose()
 Write-Output 'saved icon-comparison.png'
+
+# ==================================================================
+# ไฟล์ที่เว็บใช้งานจริง
+#
+# ทำไมเป็นไฟล์นิ่งไม่ใช่สร้างตอน request ด้วย ImageResponse:
+# satori ที่อยู่เบื้องหลังรองรับ CSS ไม่ครบและตรวจสอบผลก่อน deploy ไม่ได้
+# ลายลูกแก้วมีวงกลมทับกันและวงรีหมุน ถ้า satori วาดไม่ตรงจะพังเงียบๆ
+# ไฟล์นิ่งเปิดดูด้วยตาได้ก่อน จึงชัวร์กว่าสำหรับรูปที่ไม่เคยเปลี่ยน
+# ==================================================================
+
+$repoRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
+
+$targets = @(
+    @{ path = 'src\app\icon.png'; size = 256 },        # favicon
+    @{ path = 'src\app\apple-icon.png'; size = 180 },  # iOS หน้าโฮม
+    @{ path = 'public\icon-192.png'; size = 192 },     # manifest
+    @{ path = 'public\icon-512.png'; size = 512 }      # manifest + maskable
+)
+
+foreach ($t in $targets) {
+    $full = Join-Path $repoRoot $t.path
+    $dir = Split-Path $full -Parent
+    if (-not (Test-Path $dir)) { New-Item -ItemType Directory -Force $dir | Out-Null }
+
+    $bmp = New-Object System.Drawing.Bitmap($t.size, $t.size)
+    $g = [System.Drawing.Graphics]::FromImage($bmp)
+    $g.SmoothingMode = $smooth
+    Draw-Icon -g $g -style 'crystal' -x 0 -y 0 -s $t.size -detail $true
+    $g.Dispose()
+    $bmp.Save($full, [System.Drawing.Imaging.ImageFormat]::Png)
+    $bmp.Dispose()
+
+    Write-Output "saved $($t.path)  ($($t.size)px)"
+}
