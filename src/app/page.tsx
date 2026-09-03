@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { CuteCharacter } from "@/components/CuteCharacter";
+import { InstallAppCard } from "@/components/InstallAppCard";
 import {
   OUTFIT_STYLE_LABELS,
   getDailyCharm,
@@ -140,6 +141,8 @@ export default async function HomePage() {
           />
         </div>
       </section>
+
+      <InstallAppCard />
 
       {/* ---------- ทางไปฟีเจอร์อื่น ---------- */}
       <section className="mt-5 grid gap-3 sm:grid-cols-3">

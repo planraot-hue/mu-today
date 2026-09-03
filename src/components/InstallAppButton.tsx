@@ -38,10 +38,10 @@ export function InstallAppButton() {
       type="button"
       onClick={() => window.dispatchEvent(new CustomEvent(INSTALL_REQUEST_EVENT))}
       title="ติดตั้งมูทูเดย์ไว้ในเครื่อง"
-      className="shrink-0 rounded-full border border-line bg-card/70 px-3 py-1.5 text-xs text-ink-soft transition hover:border-lilac-deep hover:text-lilac-deep"
+      className="shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold grad-violet"
     >
       <span aria-hidden>📲</span>
-      <span className="ml-1 hidden sm:inline">ติดตั้งแอป</span>
+      <span className="ml-1">ติดตั้งแอป</span>
     </button>
   );
 }
