@@ -167,28 +167,15 @@ export function SiamsiShaker() {
         </p>
       </section>
 
-      {/* กระบอกเซียมซี
-
-          ใช้ sticky ให้กระบอกลอยตามการเลื่อน จะได้อ่านคำทำนายไปด้วย
-          แล้วเขย่าใหม่ได้เลยโดยไม่ต้องเลื่อนกลับขึ้นมา
-          top-4 เผื่อระยะจากขอบบนจอ */}
-      <section className="sticky top-4 z-20 mt-4 rounded-blob border border-line bg-card/95 p-6 text-center shadow-lg backdrop-blur-sm">
-        {!result && (
-          <>
-            <h2 className="font-cute text-2xl text-ink">
-              ตั้งจิตอธิษฐาน แล้วเขย่าเลย
-            </h2>
-            <p className="mt-1 text-sm text-ink-soft">
-              กดค้างที่กระบอกแล้วเขย่าค้างไว้ หรือสะบัดมือถือก็ได้
-            </p>
-          </>
-        )}
-
-        {result && (
-          <p className="text-sm text-ink-soft">
-            อยากได้ใบใหม่ กดค้างที่กระบอกเพื่อเขย่าอีกครั้งได้เลย
+      {/* กระบอกเซียมซี */}
+      {!result && (
+        <section className="mt-4 rounded-blob border border-line bg-card/80 p-6 text-center shadow-sm">
+          <h2 className="font-cute text-2xl text-ink">
+            ตั้งจิตอธิษฐาน แล้วเขย่าเลย
+          </h2>
+          <p className="mt-1 text-sm text-ink-soft">
+            กดค้างที่กระบอกแล้วเขย่าค้างไว้ หรือสะบัดมือถือก็ได้
           </p>
-        )}
 
           <button
             type="button"
@@ -200,21 +187,14 @@ export function SiamsiShaker() {
               } catch {
                 // บางเบราว์เซอร์ไม่รองรับ — ไม่เป็นไร ยังกดค้างได้ปกติ
               }
-              // เขย่าใหม่ทั้งที่ยังมีผลเดิมค้างอยู่ ให้ล้างผลเก่าก่อน
-              if (result) reset();
               setHolding(true);
             }}
             onPointerUp={() => setHolding(false)}
             onPointerCancel={() => setHolding(false)}
             onPointerLeave={() => setHolding(false)}
-            className="mx-auto mt-4 block touch-none select-none"
+            className="mx-auto mt-5 block touch-none select-none"
           >
-            {/* ย่อกระบอกลงตอนมีผลแล้ว จะได้ไม่บังคำทำนายที่เลื่อนอยู่ข้างใต้ */}
-            <ShakeCup
-              accent={temple.accent}
-              shaking={isShaking}
-              compact={Boolean(result)}
-            />
+            <ShakeCup accent={temple.accent} shaking={isShaking} />
           </button>
 
           <div className="mx-auto mt-5 max-w-xs">
@@ -252,7 +232,8 @@ export function SiamsiShaker() {
               📱 เปิดใช้การเขย่าด้วยมือถือ
             </button>
           )}
-      </section>
+        </section>
+      )}
 
       {/* ผลเซียมซี */}
       {result && (
@@ -342,20 +323,11 @@ function AspectCard({
 }
 
 /** กระบอกเซียมซีวาดด้วย SVG */
-function ShakeCup({
-  accent,
-  shaking,
-  compact,
-}: {
-  accent: string;
-  shaking: boolean;
-  /** ย่อลงตอนมีผลแล้ว เพราะกระบอกลอยค้างอยู่บนคำทำนาย */
-  compact?: boolean;
-}) {
+function ShakeCup({ accent, shaking }: { accent: string; shaking: boolean }) {
   return (
     <svg
       viewBox="0 0 160 220"
-      className={`${compact ? "h-32 w-24" : "h-56 w-40"} ${shaking ? "animate-shake-cup" : ""}`}
+      className={`h-56 w-40 ${shaking ? "animate-shake-cup" : ""}`}
       style={{ transform: shaking ? undefined : "rotate(-11deg)" }}
       aria-hidden
     >
