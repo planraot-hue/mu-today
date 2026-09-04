@@ -4,24 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { exitGuestAction, signOutAction } from "@/app/actions";
 import { InstallAppButton } from "@/components/InstallAppButton";
-
-/**
- * เมนู 8 อันวางเป็นตาราง 4x2 บนมือถือ และเรียงเดียว 8 ช่องบนจอใหญ่
- * จึงไม่ต้องเลื่อนแนวนอนอีกต่อไป
- *
- * tint = สีพื้นตอนที่ยังไม่ถูกเลือก ทำให้แถวเมนูดูมีสีสันแทนที่จะเป็นปุ่มขาวเรียงกัน
- * grad = สีไล่ระดับตอนถูกเลือก
- */
-const NAV_ITEMS = [
-  { href: "/", label: "สีมงคล", emoji: "🎨", grad: "grad-violet", tint: "bg-lilac/45" },
-  { href: "/birth", label: "วันเกิด", emoji: "🎂", grad: "grad-gold", tint: "bg-gold/55" },
-  { href: "/horoscope", label: "ราศี", emoji: "🔮", grad: "grad-violet", tint: "bg-lilac/50" },
-  { href: "/chinese", label: "ดวงจีน", emoji: "🧧", grad: "grad-gold", tint: "bg-gold/55" },
-  { href: "/love", label: "สมพงศ์", emoji: "💞", grad: "grad-violet", tint: "bg-lilac/45" },
-  { href: "/siamsi", label: "เซียมซี", emoji: "🥢", grad: "grad-gold", tint: "bg-gold/55" },
-  { href: "/tarot", label: "ทาโรต์", emoji: "🃏", grad: "grad-violet", tint: "bg-lilac/55" },
-  { href: "/phrom-yan", label: "พรหมญาณ", emoji: "🔯", grad: "grad-violet", tint: "bg-lilac/50" },
-];
+import { PopularTab } from "@/components/PopularTab";
+import { FEATURES } from "@/lib/features";
 
 export function SiteHeader({
   email,
@@ -88,9 +72,11 @@ export function SiteHeader({
         </div>
       </div>
 
+      <PopularTab />
+
       <nav className="mt-4">
         <ul className="grid grid-cols-4 gap-1.5 sm:grid-cols-8 sm:gap-2">
-          {NAV_ITEMS.map((item) => {
+          {FEATURES.map((item) => {
             const isActive =
               item.href === "/"
                 ? pathname === "/"
