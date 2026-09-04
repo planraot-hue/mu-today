@@ -13,10 +13,16 @@ type MotionEventWithPermission = typeof DeviceMotionEvent & {
   requestPermission?: () => Promise<PermissionState | "granted" | "denied">;
 };
 
+/** ความยาวของ animation `stick-drop` ใน globals.css บวกเวลาให้ไม้นอนนิ่งอีกนิด */
+const STICK_DROP_MS = 1450;
+
 export function SiamsiShaker() {
   const [temple, setTemple] = useState<Temple>(TEMPLES[0]);
   const [progress, setProgress] = useState(0);
   const [holding, setHolding] = useState(false);
+  /** ใบที่จับได้แล้ว แต่ยังอยู่ระหว่างแอนิเมชันไม้หล่น */
+  const [drawn, setDrawn] = useState<SiamsiStick | null>(null);
+  /** ใบที่เปิดคำทำนายแล้ว — ตั้งหลังไม้หล่นจบ */
   const [result, setResult] = useState<SiamsiStick | null>(null);
 
   const [motionEnabled, setMotionEnabled] = useState(false);
@@ -25,6 +31,7 @@ export function SiamsiShaker() {
   const reset = useCallback(() => {
     setProgress(0);
     setHolding(false);
+    setDrawn(null);
     setResult(null);
   }, []);
 
@@ -36,21 +43,21 @@ export function SiamsiShaker() {
   /* ---------- เขย่าด้วยการกดค้าง ---------- */
 
   useEffect(() => {
-    if (!holding || result) return;
+    if (!holding || drawn) return;
     const timer = window.setInterval(() => {
       setProgress((current) => Math.min(100, current + 5));
     }, 60);
     return () => window.clearInterval(timer);
-  }, [holding, result]);
+  }, [holding, drawn]);
 
   // ปล่อยมือแล้วพลังเขย่าจะค่อยๆ ลดลง ต้องเขย่าต่อเนื่องถึงจะได้ใบเซียมซี
   useEffect(() => {
-    if (holding || result || progress <= 0 || progress >= 100) return;
+    if (holding || drawn || progress <= 0 || progress >= 100) return;
     const timer = window.setInterval(() => {
       setProgress((current) => Math.max(0, current - 2));
     }, 120);
     return () => window.clearInterval(timer);
-  }, [holding, progress, result]);
+  }, [holding, progress, drawn]);
 
   /* ---------- เขย่าด้วยการสะบัดมือถือจริงๆ ---------- */
 
@@ -68,7 +75,7 @@ export function SiamsiShaker() {
   }, []);
 
   useEffect(() => {
-    if (!motionEnabled || result) return;
+    if (!motionEnabled || drawn) return;
 
     let lastShakeAt = 0;
 
@@ -91,7 +98,7 @@ export function SiamsiShaker() {
 
     window.addEventListener("devicemotion", handleMotion);
     return () => window.removeEventListener("devicemotion", handleMotion);
-  }, [motionEnabled, result]);
+  }, [motionEnabled, drawn]);
 
   async function requestMotionPermission() {
     const motionEvent = window.DeviceMotionEvent as MotionEventWithPermission;
@@ -110,13 +117,23 @@ export function SiamsiShaker() {
   /* ---------- เขย่าครบแล้วหยิบใบเซียมซี ---------- */
 
   useEffect(() => {
-    if (progress < 100 || result) return;
+    if (progress < 100 || drawn) return;
     setHolding(false);
     const sticks = temple.sticks;
-    setResult(sticks[Math.floor(Math.random() * sticks.length)]);
-  }, [progress, result, temple]);
+    setDrawn(sticks[Math.floor(Math.random() * sticks.length)]);
+  }, [progress, drawn, temple]);
 
-  const isShaking = holding && !result;
+  /* ---------- ไม้หล่นจบแล้วค่อยเปิดคำทำนาย ----------
+     หน่วงเท่าความยาวของ animation stick-drop ใน globals.css
+     ถ้าไปแก้เวลาที่ CSS ต้องแก้ตรงนี้ด้วย */
+
+  useEffect(() => {
+    if (!drawn || result) return;
+    const timer = window.setTimeout(() => setResult(drawn), STICK_DROP_MS);
+    return () => window.clearTimeout(timer);
+  }, [drawn, result]);
+
+  const isShaking = holding && !drawn;
 
   return (
     <>
@@ -177,25 +194,40 @@ export function SiamsiShaker() {
             กดค้างที่กระบอกแล้วเขย่าค้างไว้ หรือสะบัดมือถือก็ได้
           </p>
 
-          <button
-            type="button"
-            aria-label="กดค้างเพื่อเขย่ากระบอกเซียมซี"
-            onPointerDown={(event) => {
-              try {
-                // จับ pointer ไว้ เพื่อให้ลากนิ้วออกนอกปุ่มแล้วยังเขย่าต่อได้
-                event.currentTarget.setPointerCapture(event.pointerId);
-              } catch {
-                // บางเบราว์เซอร์ไม่รองรับ — ไม่เป็นไร ยังกดค้างได้ปกติ
-              }
-              setHolding(true);
-            }}
-            onPointerUp={() => setHolding(false)}
-            onPointerCancel={() => setHolding(false)}
-            onPointerLeave={() => setHolding(false)}
-            className="mx-auto mt-5 block touch-none select-none"
-          >
-            <ShakeCup accent={temple.accent} shaking={isShaking} />
-          </button>
+          {/* กรอบนี้กว้างเท่ากระบอก (w-40) และเป็นจุดอ้างอิงของไม้ที่หล่น
+              ไม้จึงวางตำแหน่งจากปากกระบอกได้ตรง ไม่ต้องเดาระยะจากขอบการ์ด */}
+          <div className="relative mx-auto mt-5 w-40">
+            <button
+              type="button"
+              aria-label="กดค้างเพื่อเขย่ากระบอกเซียมซี"
+              onPointerDown={(event) => {
+                try {
+                  // จับ pointer ไว้ เพื่อให้ลากนิ้วออกนอกปุ่มแล้วยังเขย่าต่อได้
+                  event.currentTarget.setPointerCapture(event.pointerId);
+                } catch {
+                  // บางเบราว์เซอร์ไม่รองรับ — ไม่เป็นไร ยังกดค้างได้ปกติ
+                }
+                setHolding(true);
+              }}
+              onPointerUp={() => setHolding(false)}
+              onPointerCancel={() => setHolding(false)}
+              onPointerLeave={() => setHolding(false)}
+              className="block w-full touch-none select-none"
+            >
+              <ShakeCup accent={temple.accent} shaking={isShaking} />
+            </button>
+
+            {/* ไม้ที่หล่นออกจากกระบอก เริ่มที่ระดับปากกระบอก (~85px จากยอดกระบอก)
+                แล้วให้ keyframes stick-drop พาเด้งขึ้นแล้วตกลงมานอนที่ก้นกระบอก */}
+            {drawn && (
+              <span
+                className="animate-stick-drop pointer-events-none absolute left-1/2 top-[85px] z-10 block"
+                aria-hidden
+              >
+                <FallingStick label={drawn.thaiNumber} accent={temple.accent} />
+              </span>
+            )}
+          </div>
 
           <div className="mx-auto mt-5 max-w-xs">
             <div
@@ -215,11 +247,13 @@ export function SiamsiShaker() {
               />
             </div>
             <p className="mt-2 text-xs text-ink-soft">
-              {progress === 0
-                ? "ยังไม่ได้เขย่าเลย"
-                : progress < 60
-                  ? "เขย่าต่อไปอีกหน่อย…"
-                  : "ใกล้แล้ว ใบเซียมซีกำลังจะหล่น!"}
+              {drawn
+                ? `ไม้หล่นแล้ว! ใบที่ ${drawn.thaiNumber} …`
+                : progress === 0
+                  ? "ยังไม่ได้เขย่าเลย"
+                  : progress < 60
+                    ? "เขย่าต่อไปอีกหน่อย…"
+                    : "ใกล้แล้ว ใบเซียมซีกำลังจะหล่น!"}
             </p>
           </div>
 
@@ -323,6 +357,43 @@ function AspectCard({
 }
 
 /** กระบอกเซียมซีวาดด้วย SVG */
+/**
+ * ไม้เซียมซีใบที่จับได้ ใช้เฉพาะตอนแอนิเมชันหล่น
+ *
+ * เลขไทยหมุน 90 องศาสวนกับตัวไม้ เพราะปลายทางไม้จะนอนราบ
+ * ถ้าไม่หมุนสวน เลขจะตะแคงอ่านไม่ออกตอนไม้หยุดนิ่ง
+ */
+function FallingStick({ label, accent }: { label: string; accent: string }) {
+  return (
+    <svg viewBox="0 0 20 96" className="h-24 w-5 drop-shadow-md" aria-hidden>
+      <rect
+        x="1"
+        y="1"
+        width="18"
+        height="94"
+        rx="9"
+        fill="#F3DFC2"
+        stroke="#DCC29A"
+        strokeWidth="1.5"
+      />
+      {/* ปลายทาสีประจำวัด ให้รู้ว่าเป็นไม้ของวัดที่เลือกไว้ */}
+      <rect x="1" y="1" width="18" height="24" rx="9" fill={accent} />
+      <text
+        x="10"
+        y="62"
+        transform="rotate(90 10 62)"
+        textAnchor="middle"
+        dominantBaseline="middle"
+        fontSize="13"
+        fill="#4A3B52"
+        fontFamily="var(--font-itim), sans-serif"
+      >
+        {label}
+      </text>
+    </svg>
+  );
+}
+
 function ShakeCup({ accent, shaking }: { accent: string; shaking: boolean }) {
   return (
     <svg

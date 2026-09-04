@@ -125,6 +125,41 @@ body {
   }
 }
 
+/* ไม้เซียมซีเด้งพ้นปากกระบอกแล้วหล่นลงพื้น
+   translate ใช้ -50% แกน x เพื่อจัดกึ่งกลางไปในตัว
+   จะได้ไม่ต้องพึ่ง left/margin ที่คำนวณยากตอนหมุน */
+@keyframes stick-drop {
+  /* ยังอยู่ในกระบอก ยังไม่ต้องเห็น */
+  0% {
+    transform: translate(-50%, 6px) rotate(-8deg);
+    opacity: 0;
+  }
+  /* พุ่งพ้นปากกระบอกขึ้นไป */
+  14% {
+    transform: translate(-50%, -92px) rotate(-4deg);
+    opacity: 1;
+  }
+  /* เริ่มตะแคงแล้วร่วงลง */
+  46% {
+    transform: translate(-50%, -6px) rotate(26deg);
+  }
+  74% {
+    transform: translate(-50%, 104px) rotate(84deg);
+  }
+  /* เด้งเล็กน้อยตอนกระทบ แล้วนอนราบข้างกระบอก */
+  88% {
+    transform: translate(-50%, 88px) rotate(90deg);
+  }
+  100% {
+    transform: translate(-50%, 100px) rotate(92deg);
+    opacity: 1;
+  }
+}
+
+.animate-stick-drop {
+  animation: stick-drop 1.25s cubic-bezier(0.35, 0.1, 0.45, 1) forwards;
+}
+
 @keyframes pop-in {
   0% {
     opacity: 0;
@@ -254,6 +289,13 @@ body {
   .animate-chat-wiggle,
   .animate-chat-tip {
     animation: none !important;
+  }
+
+  /* ไม้หล่นเป็นลูกเล่นล้วนๆ ถ้าปิดแอนิเมชันก็ซ่อนไปเลย
+     ไม่งั้นจะมีไม้ค้างนิ่งอยู่กลางจอ ส่วนคำทำนายยังขึ้นตามเดิม */
+  .animate-stick-drop {
+    animation: none !important;
+    display: none !important;
   }
 }
 
