@@ -14,9 +14,9 @@ import { useStoredBirthDate } from "@/lib/use-birth-date";
 
 const CLASH_STYLES: Record<string, { bg: string; text: string; emoji: string }> =
   {
-    "ชงตรง": { bg: "#FFE0E6", text: "#B34A62", emoji: "⚡" },
-    "คัดชง": { bg: "#FFEFC2", text: "#9A6B00", emoji: "🌤️" },
-    "ปกติ": { bg: "#D6F2E2", text: "#2E7D5B", emoji: "✅" },
+    "ชงตรง": { bg: "#F7E3E8", text: "#A8455A", emoji: "⚡" },
+    "คัดชง": { bg: "#FBECC9", text: "#9A6E06", emoji: "🌤️" },
+    "ปกติ": { bg: "#ECE3FB", text: "#7C5FD3", emoji: "✅" },
   };
 
 export function ChineseFortune({ currentYear }: { currentYear: number }) {
@@ -79,7 +79,7 @@ export function ChineseFortune({ currentYear }: { currentYear: number }) {
         </p>
 
         {profile.nearNewYear && (
-          <p className="mx-auto mt-4 max-w-md rounded-2xl bg-butter/70 p-3 text-xs leading-relaxed text-ink">
+          <p className="mx-auto mt-4 max-w-md rounded-2xl bg-gold/70 p-3 text-xs leading-relaxed text-ink">
             ⚠️ คุณเกิดช่วงต้นปี ซึ่งอาจอยู่ก่อนวันตรุษจีนของปีนั้น
             ถ้าเกิดก่อนตรุษจีน นักษัตรของคุณจะเป็น{" "}
             <strong>
@@ -100,7 +100,7 @@ export function ChineseFortune({ currentYear }: { currentYear: number }) {
         </p>
 
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
-          <div className="rounded-2xl border border-line bg-mint/40 p-4">
+          <div className="rounded-2xl border border-line bg-gold/40 p-4">
             <p className="text-sm font-semibold text-ink">✨ จุดแข็ง</p>
             <ul className="mt-2 space-y-1">
               {profile.animal.strengths.map((item) => (
@@ -110,7 +110,7 @@ export function ChineseFortune({ currentYear }: { currentYear: number }) {
               ))}
             </ul>
           </div>
-          <div className="rounded-2xl border border-line bg-blossom/40 p-4">
+          <div className="rounded-2xl border border-line bg-lilac/40 p-4">
             <p className="text-sm font-semibold text-ink">⚠️ จุดที่ควรระวัง</p>
             <ul className="mt-2 space-y-1">
               {profile.animal.weaknesses.map((item) => (
@@ -169,13 +169,13 @@ export function ChineseFortune({ currentYear }: { currentYear: number }) {
         </div>
 
         <div className="mt-3 grid gap-3 sm:grid-cols-2">
-          <div className="rounded-2xl border border-line bg-butter/50 p-4">
+          <div className="rounded-2xl border border-line bg-gold/50 p-4">
             <p className="text-xs text-ink-soft">เลขนำโชคประจำปี</p>
             <p className="font-cute text-xl text-ink">
               {fortune.luckyNumbers.join(" · ")}
             </p>
           </div>
-          <div className="rounded-2xl border border-line bg-mint/50 p-4">
+          <div className="rounded-2xl border border-line bg-gold/50 p-4">
             <p className="text-xs text-ink-soft">สีนำโชคประจำปี</p>
             <p className="font-cute text-xl text-ink">{fortune.luckyColor}</p>
           </div>
@@ -193,7 +193,7 @@ export function ChineseFortune({ currentYear }: { currentYear: number }) {
           {matches.map((animal) => (
             <div
               key={animal.index}
-              className="flex items-center gap-3 rounded-2xl border border-line bg-mint/35 p-4"
+              className="flex items-center gap-3 rounded-2xl border border-line bg-gold/35 p-4"
             >
               <span className="text-3xl" aria-hidden>
                 {animal.emoji}

@@ -16,7 +16,7 @@ function SubmitButton({ mode }: { mode: Mode }) {
     <button
       type="submit"
       disabled={pending}
-      className="w-full rounded-full bg-blossom-deep px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blossom-deep disabled:cursor-not-allowed disabled:opacity-60"
+      className="w-full rounded-full bg-lilac-deep px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lilac-deep disabled:cursor-not-allowed disabled:opacity-60"
     >
       {pending
         ? "กำลังดำเนินการ…"
@@ -60,7 +60,7 @@ export function LoginForm({ next }: { next: string }) {
             onClick={() => setMode(item)}
             className={`flex-1 rounded-full px-3 py-2 text-sm transition ${
               mode === item
-                ? "grad-pink"
+                ? "grad-violet"
                 : "text-ink-soft hover:text-ink"
             }`}
           >
@@ -84,7 +84,7 @@ export function LoginForm({ next }: { next: string }) {
             required
             autoComplete="email"
             placeholder="you@example.com"
-            className="w-full rounded-2xl border border-line bg-cream px-4 py-3 text-base text-ink outline-none transition placeholder:text-ink-soft focus:border-blossom-deep focus:ring-2 focus:ring-blossom-deep/25"
+            className="w-full rounded-2xl border border-line bg-cream px-4 py-3 text-base text-ink outline-none transition placeholder:text-ink-soft focus:border-lilac-deep focus:ring-2 focus:ring-lilac-deep/25"
           />
         </div>
 
@@ -107,7 +107,7 @@ export function LoginForm({ next }: { next: string }) {
             placeholder={mode === "signup" ? "อย่างน้อย 6 ตัวอักษร" : "รหัสผ่าน"}
             aria-invalid={state.error ? true : undefined}
             aria-describedby={state.error ? "auth-error" : undefined}
-            className="w-full rounded-2xl border border-line bg-cream px-4 py-3 text-base text-ink outline-none transition placeholder:text-ink-soft focus:border-blossom-deep focus:ring-2 focus:ring-blossom-deep/25"
+            className="w-full rounded-2xl border border-line bg-cream px-4 py-3 text-base text-ink outline-none transition placeholder:text-ink-soft focus:border-lilac-deep focus:ring-2 focus:ring-lilac-deep/25"
           />
         </div>
 
@@ -115,7 +115,7 @@ export function LoginForm({ next }: { next: string }) {
           <p
             id="auth-error"
             role="alert"
-            className="rounded-2xl bg-blossom/50 px-3 py-2 text-sm text-danger"
+            className="rounded-2xl bg-lilac/50 px-3 py-2 text-sm text-danger"
           >
             {state.error}
           </p>
@@ -124,7 +124,7 @@ export function LoginForm({ next }: { next: string }) {
         {state.notice && (
           <p
             role="status"
-            className="rounded-2xl bg-mint/60 px-3 py-2 text-sm leading-relaxed text-ink"
+            className="rounded-2xl bg-gold/60 px-3 py-2 text-sm leading-relaxed text-ink"
           >
             ✉️ {state.notice}
           </p>

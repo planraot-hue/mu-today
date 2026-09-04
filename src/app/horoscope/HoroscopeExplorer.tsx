@@ -173,21 +173,21 @@ export function HoroscopeExplorer({ periodKeys, periodLabels }: Props) {
           <InfoPill
             label="เลขนำโชค"
             value={fortune.luckyNumbers.join(" · ")}
-            className="bg-butter/50"
+            className="bg-gold/50"
           />
           <InfoPill
             label="สีนำโชค"
             value={fortune.luckyColor}
-            className="bg-mint/50"
+            className="bg-gold/50"
           />
           <InfoPill
             label="คะแนนรวม"
             value={`${fortune.overallScore} / 5`}
-            className="bg-sky/50"
+            className="bg-lilac/50"
           />
         </div>
 
-        <p className="mt-4 rounded-2xl border border-dashed border-blossom-deep/40 bg-blossom/25 p-4 text-sm text-ink">
+        <p className="mt-4 rounded-2xl border border-dashed border-lilac-deep/40 bg-lilac/25 p-4 text-sm text-ink">
           <span className="font-semibold">คำแนะนำ · </span>
           {fortune.advice}
         </p>
@@ -202,7 +202,7 @@ function Stars({ score, small }: { score: number; small?: boolean }) {
       className={small ? "text-sm" : "text-base"}
       aria-label={`คะแนน ${score} จาก 5`}
     >
-      <span aria-hidden className="text-butter-deep">
+      <span aria-hidden className="text-gold-deep">
         {"★".repeat(score)}
       </span>
       <span aria-hidden className="text-line">

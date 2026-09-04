@@ -28,14 +28,14 @@ const FEATURE_LINKS = [
     emoji: "🥢",
     title: "เสี่ยงเซียมซี",
     detail: "วัดดัง 4 ภาค เขย่าเองได้",
-    className: "bg-mint",
+    className: "bg-gold",
   },
   {
     href: "/tarot",
     emoji: "🃏",
     title: "ไพ่ทาโรต์",
     detail: "เปิด 1 ใบ หรือ 3 ใบ",
-    className: "bg-sky",
+    className: "bg-lilac",
   },
 ];
 
@@ -282,7 +282,7 @@ function CharmCard({
   value: string;
 }) {
   return (
-    <div className="rounded-2xl border border-line bg-butter/50 p-4">
+    <div className="rounded-2xl border border-line bg-gold/50 p-4">
       <p className="text-xs text-ink-soft">
         <span aria-hidden>{emoji}</span> {label}
       </p>

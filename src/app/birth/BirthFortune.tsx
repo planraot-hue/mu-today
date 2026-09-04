@@ -52,7 +52,7 @@ export function BirthFortune({ todayKey }: { todayKey: string }) {
       {/* สรุปหัวเรื่อง */}
       <section
         key={`${birth.year}-${birth.month}-${birth.day}`}
-        className="animate-pop-in mt-4 rounded-blob border border-line p-5 shadow-sm sm:p-7 grad-soft-pink"
+        className="animate-pop-in mt-4 rounded-blob border border-line p-5 shadow-sm sm:p-7 grad-soft-violet"
       >
         <p className="text-sm text-ink-soft">{formatBirthDate(birth)}</p>
         <h2 className="font-cute text-3xl leading-snug text-ink">
@@ -101,13 +101,13 @@ export function BirthFortune({ todayKey }: { todayKey: string }) {
             title="จุดแข็ง"
             emoji="✨"
             items={dayProfile.strengths}
-            className="bg-mint/40"
+            className="bg-gold/40"
           />
           <TraitList
             title="จุดที่ควรระวัง"
             emoji="⚠️"
             items={dayProfile.weaknesses}
-            className="bg-blossom/40"
+            className="bg-lilac/40"
           />
         </div>
 
@@ -117,7 +117,7 @@ export function BirthFortune({ todayKey }: { todayKey: string }) {
             {dayProfile.careers.map((career) => (
               <li
                 key={career}
-                className="rounded-full bg-butter/60 px-3 py-1.5 text-xs text-ink"
+                className="rounded-full bg-gold/60 px-3 py-1.5 text-xs text-ink"
               >
                 {career}
               </li>
@@ -125,7 +125,7 @@ export function BirthFortune({ todayKey }: { todayKey: string }) {
           </ul>
         </div>
 
-        <p className="mt-3 rounded-2xl border border-dashed border-blossom-deep/40 bg-blossom/25 p-4 text-sm text-ink">
+        <p className="mt-3 rounded-2xl border border-dashed border-lilac-deep/40 bg-lilac/25 p-4 text-sm text-ink">
           <span className="font-semibold">คำแนะนำ · </span>
           {dayProfile.advice}
         </p>
@@ -156,9 +156,9 @@ export function BirthFortune({ todayKey }: { todayKey: string }) {
                   key={entry.bhum.key}
                   className={`border-b border-line/60 align-top ${
                     entry.bhum.key === "kalakini"
-                      ? "bg-blossom/25"
+                      ? "bg-danger/10"
                       : entry.bhum.highlighted
-                        ? "bg-mint/25"
+                        ? "bg-gold/25"
                         : ""
                   }`}
                 >
@@ -167,7 +167,7 @@ export function BirthFortune({ todayKey }: { todayKey: string }) {
                       {entry.bhum.name}
                     </span>
                     {entry.bhum.highlighted && (
-                      <span className="ml-1 text-[10px] text-mint-deep">
+                      <span className="ml-1 text-[10px] text-gold-deep">
                         แนะนำ
                       </span>
                     )}
@@ -207,7 +207,7 @@ export function BirthFortune({ todayKey }: { todayKey: string }) {
 
         <Link
           href="/love"
-          className="mt-4 inline-block rounded-full px-5 py-2.5 text-sm font-semibold grad-pink"
+          className="mt-4 inline-block rounded-full px-5 py-2.5 text-sm font-semibold grad-violet"
         >
           ดูดวงสมพงศ์ด้วยทักษา →
         </Link>

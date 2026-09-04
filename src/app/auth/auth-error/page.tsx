@@ -25,7 +25,7 @@ export default async function AuthErrorPage({
 
         <Link
           href="/login"
-          className="mt-5 inline-block rounded-full bg-blossom-deep px-5 py-2.5 text-sm font-semibold text-white transition hover:opacity-90"
+          className="mt-5 inline-block rounded-full bg-lilac-deep px-5 py-2.5 text-sm font-semibold text-white transition hover:opacity-90"
         >
           กลับไปหน้าเข้าสู่ระบบ
         </Link>

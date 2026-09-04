@@ -24,7 +24,7 @@ export default function OfflinePage() {
           ลองเช็กสัญญาณแล้วกดลองใหม่อีกครั้งนะคะ
         </p>
 
-        <p className="mt-3 rounded-2xl bg-butter/50 p-3 text-xs leading-relaxed text-ink">
+        <p className="mt-3 rounded-2xl bg-gold/50 p-3 text-xs leading-relaxed text-ink">
           หน้าที่เคยเปิดตอนมีเน็ตแล้วจะยังดูย้อนหลังได้ปกติ
           ส่วนแชทกับการเข้าสู่ระบบต้องต่อเน็ตเสมอ
         </p>

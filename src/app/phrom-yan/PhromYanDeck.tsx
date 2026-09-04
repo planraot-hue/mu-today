@@ -59,7 +59,7 @@ export function PhromYanDeck() {
           <button
             type="button"
             onClick={startShuffle}
-            className="mt-5 rounded-full px-6 py-3 text-sm font-semibold grad-sun"
+            className="mt-5 rounded-full px-6 py-3 text-sm font-semibold grad-gold"
           >
             🔀 สับสำรับแล้ววางไพ่
           </button>
@@ -111,7 +111,7 @@ export function PhromYanDeck() {
                       : "hover:-translate-y-2 hover:shadow-lg"
                   } ${
                     isPicked
-                      ? "border-butter-deep shadow-lg"
+                      ? "border-gold-deep shadow-lg"
                       : "border-white grad-violet"
                   }`}
                   style={
@@ -146,7 +146,7 @@ export function PhromYanDeck() {
               type="button"
               onClick={startShuffle}
               disabled={isShuffling}
-              className="rounded-full border border-line px-5 py-2.5 text-sm text-ink-soft transition hover:border-butter-deep hover:text-ink disabled:cursor-not-allowed disabled:opacity-70"
+              className="rounded-full border border-line px-5 py-2.5 text-sm text-ink-soft transition hover:border-gold-deep hover:text-ink disabled:cursor-not-allowed disabled:opacity-70"
             >
               {isShuffling ? "🔀 กำลังสับสำรับ…" : "🔄 สับสำรับใหม่"}
             </button>
@@ -197,7 +197,7 @@ export function PhromYanDeck() {
             {picked.meaning}
           </p>
 
-          <p className="mt-4 rounded-2xl border border-dashed border-butter-deep/50 bg-butter/30 p-4 text-sm leading-relaxed text-ink">
+          <p className="mt-4 rounded-2xl border border-dashed border-gold-deep/50 bg-gold/30 p-4 text-sm leading-relaxed text-ink">
             <span className="font-semibold">คำแนะนำ · </span>
             {picked.advice}
           </p>
@@ -205,7 +205,7 @@ export function PhromYanDeck() {
           <button
             type="button"
             onClick={startShuffle}
-            className="mt-5 w-full rounded-full px-4 py-3 text-sm font-semibold grad-sun"
+            className="mt-5 w-full rounded-full px-4 py-3 text-sm font-semibold grad-gold"
           >
             🔯 เสี่ยงทายใหม่อีกครั้ง
           </button>

@@ -136,7 +136,7 @@ export function SiamsiShaker() {
                   className={`w-full rounded-2xl border p-4 text-left transition ${
                     isActive
                       ? "border-transparent shadow-sm"
-                      : "border-line bg-card hover:border-mint-deep"
+                      : "border-line bg-card hover:border-gold-deep"
                   }`}
                   style={
                     isActive ? { backgroundColor: `${item.accent}66` } : undefined
@@ -162,7 +162,7 @@ export function SiamsiShaker() {
           })}
         </ul>
 
-        <p className="mt-3 rounded-2xl bg-mint/40 p-3 text-xs leading-relaxed text-ink-soft">
+        <p className="mt-3 rounded-2xl bg-gold/40 p-3 text-xs leading-relaxed text-ink-soft">
           {temple.description}
         </p>
       </section>
@@ -227,7 +227,7 @@ export function SiamsiShaker() {
             <button
               type="button"
               onClick={requestMotionPermission}
-              className="mt-4 rounded-full border border-line px-4 py-2 text-xs text-ink-soft transition hover:border-mint-deep hover:text-ink"
+              className="mt-4 rounded-full border border-line px-4 py-2 text-xs text-ink-soft transition hover:border-gold-deep hover:text-ink"
             >
               📱 เปิดใช้การเขย่าด้วยมือถือ
             </button>
@@ -243,7 +243,7 @@ export function SiamsiShaker() {
           <button
             type="button"
             onClick={reset}
-            className="mt-5 w-full rounded-full px-4 py-3 text-sm font-semibold transition hover:opacity-90 grad-mint"
+            className="mt-5 w-full rounded-full px-4 py-3 text-sm font-semibold transition hover:opacity-90 grad-gold"
           >
             🥢 เสี่ยงใหม่อีกครั้ง
           </button>

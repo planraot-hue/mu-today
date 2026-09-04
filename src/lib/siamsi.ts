@@ -39,10 +39,10 @@ export const LEVEL_STYLES: Record<
   SiamsiLevel,
   { emoji: string; bg: string; text: string }
 > = {
-  "ดีเยี่ยม": { emoji: "🌟", bg: "#FFEFC2", text: "#9A6B00" },
-  "ดี": { emoji: "🌤️", bg: "#D6F2E2", text: "#2E7D5B" },
-  "ปานกลาง": { emoji: "☁️", bg: "#E6E8F2", text: "#5B6180" },
-  "ควรระวัง": { emoji: "🌧️", bg: "#FFE0E6", text: "#B34A62" },
+  "ดีเยี่ยม": { emoji: "🌟", bg: "#FBECC9", text: "#9A6E06" },
+  "ดี": { emoji: "🌤️", bg: "#ECE3FB", text: "#7C5FD3" },
+  "ปานกลาง": { emoji: "☁️", bg: "#EEF0F6", text: "#6B7194" },
+  "ควรระวัง": { emoji: "🌧️", bg: "#F7E3E8", text: "#A8455A" },
 };
 
 export const TEMPLES: Temple[] = [

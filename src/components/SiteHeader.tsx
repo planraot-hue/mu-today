@@ -13,13 +13,13 @@ import { InstallAppButton } from "@/components/InstallAppButton";
  * grad = สีไล่ระดับตอนถูกเลือก
  */
 const NAV_ITEMS = [
-  { href: "/", label: "สีมงคล", emoji: "🎨", grad: "grad-pink", tint: "bg-blossom/45" },
-  { href: "/birth", label: "วันเกิด", emoji: "🎂", grad: "grad-sun", tint: "bg-butter/55" },
+  { href: "/", label: "สีมงคล", emoji: "🎨", grad: "grad-violet", tint: "bg-lilac/45" },
+  { href: "/birth", label: "วันเกิด", emoji: "🎂", grad: "grad-gold", tint: "bg-gold/55" },
   { href: "/horoscope", label: "ราศี", emoji: "🔮", grad: "grad-violet", tint: "bg-lilac/50" },
-  { href: "/chinese", label: "ดวงจีน", emoji: "🧧", grad: "grad-sun", tint: "bg-butter/55" },
-  { href: "/love", label: "สมพงศ์", emoji: "💞", grad: "grad-pink", tint: "bg-blossom/45" },
-  { href: "/siamsi", label: "เซียมซี", emoji: "🥢", grad: "grad-mint", tint: "bg-mint/55" },
-  { href: "/tarot", label: "ทาโรต์", emoji: "🃏", grad: "grad-sky", tint: "bg-sky/55" },
+  { href: "/chinese", label: "ดวงจีน", emoji: "🧧", grad: "grad-gold", tint: "bg-gold/55" },
+  { href: "/love", label: "สมพงศ์", emoji: "💞", grad: "grad-violet", tint: "bg-lilac/45" },
+  { href: "/siamsi", label: "เซียมซี", emoji: "🥢", grad: "grad-gold", tint: "bg-gold/55" },
+  { href: "/tarot", label: "ทาโรต์", emoji: "🃏", grad: "grad-violet", tint: "bg-lilac/55" },
   { href: "/phrom-yan", label: "พรหมญาณ", emoji: "🔯", grad: "grad-violet", tint: "bg-lilac/50" },
 ];
 
@@ -52,13 +52,13 @@ export function SiteHeader({
 
           {isGuest ? (
             <>
-              <span className="hidden rounded-full bg-butter/70 px-3 py-1 text-xs text-ink sm:inline">
+              <span className="hidden rounded-full bg-gold/70 px-3 py-1 text-xs text-ink sm:inline">
                 👀 โหมดผู้เยี่ยมชม
               </span>
               <form action={exitGuestAction}>
                 <button
                   type="submit"
-                  className="shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold grad-pink"
+                  className="shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold grad-violet"
                 >
                   เข้าสู่ระบบ
                 </button>
@@ -78,7 +78,7 @@ export function SiteHeader({
               <form action={signOutAction}>
                 <button
                   type="submit"
-                  className="shrink-0 rounded-full border border-line bg-card/70 px-3 py-1.5 text-xs text-ink-soft transition hover:border-blossom-deep hover:text-blossom-deep"
+                  className="shrink-0 rounded-full border border-line bg-card/70 px-3 py-1.5 text-xs text-ink-soft transition hover:border-lilac-deep hover:text-lilac-deep"
                 >
                   ออกจากระบบ
                 </button>

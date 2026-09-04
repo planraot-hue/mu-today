@@ -263,7 +263,7 @@ export function PwaSetup() {
               </ol>
             </div>
 
-            <p className="mt-3 rounded-2xl bg-butter/50 p-3 text-xs leading-relaxed text-ink">
+            <p className="mt-3 rounded-2xl bg-gold/50 p-3 text-xs leading-relaxed text-ink">
               ถ้าเพิ่งถอนการติดตั้งไป เบราว์เซอร์อาจซ่อนปุ่มติดตั้งอัตโนมัติไว้สักพัก
               ให้ใช้วิธีในเมนูตามขั้นตอนด้านบนได้เลยค่ะ
             </p>

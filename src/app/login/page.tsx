@@ -25,7 +25,7 @@ export default async function LoginPage({
         {isSupabaseConfigured ? (
           <LoginForm next={next ?? "/"} />
         ) : (
-          <div className="rounded-2xl bg-butter/60 p-4 text-sm leading-relaxed text-ink">
+          <div className="rounded-2xl bg-gold/60 p-4 text-sm leading-relaxed text-ink">
             <p className="font-semibold">ยังเชื่อมต่อ Supabase ไม่ได้</p>
             <p className="mt-1 text-ink-soft">
               ต้องตั้งค่า <code>NEXT_PUBLIC_SUPABASE_URL</code> และ{" "}

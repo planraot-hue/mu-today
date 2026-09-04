@@ -204,7 +204,7 @@ export default async function SourcesPage() {
 
               <Link
                 href={item.href}
-                className="mt-2 inline-block text-xs text-blossom-deep underline underline-offset-2"
+                className="mt-2 inline-block text-xs text-lilac-deep underline underline-offset-2"
               >
                 ไปที่ฟีเจอร์นี้ →
               </Link>
@@ -213,7 +213,7 @@ export default async function SourcesPage() {
         })}
       </section>
 
-      <section className="mt-4 rounded-blob border border-dashed border-blossom-deep/40 bg-blossom/20 p-5 text-sm leading-relaxed text-ink">
+      <section className="mt-4 rounded-blob border border-dashed border-lilac-deep/40 bg-lilac/20 p-5 text-sm leading-relaxed text-ink">
         <p className="font-semibold">ข้อจำกัดที่อยากบอกให้ชัด</p>
         <p className="mt-2">
           เว็บนี้ไม่ได้เชื่อมต่อฐานข้อมูลตำแหน่งดาว (ephemeris)

@@ -25,7 +25,7 @@ export function LoveMatch() {
     <>
       <section className="rounded-blob border border-line bg-card/80 p-5 shadow-sm sm:p-6">
         <div className="grid gap-5 sm:grid-cols-2">
-          <div className="rounded-2xl bg-blossom/25 p-4">
+          <div className="rounded-2xl bg-lilac/25 p-4">
             <BirthDatePicker
               value={mine}
               onChange={(next) => {
@@ -59,7 +59,7 @@ export function LoveMatch() {
         <button
           type="button"
           onClick={() => setRevealed(true)}
-          className="mt-5 w-full rounded-full px-4 py-3 text-sm font-semibold grad-pink"
+          className="mt-5 w-full rounded-full px-4 py-3 text-sm font-semibold grad-violet"
         >
           {revealed ? "💞 ทำนายอีกครั้ง" : "💞 ทำนายดวงสมพงศ์"}
         </button>
@@ -70,7 +70,7 @@ export function LoveMatch() {
           {/* คะแนนรวม */}
           <section
             key={`${result.totalScore}-${mine.day}-${partner.day}`}
-            className="animate-pop-in mt-4 rounded-blob border border-line p-6 text-center shadow-sm grad-soft-pink"
+            className="animate-pop-in mt-4 rounded-blob border border-line p-6 text-center shadow-sm grad-soft-violet"
           >
             <p className="text-5xl" aria-hidden>
               {result.levelEmoji}
@@ -93,7 +93,7 @@ export function LoveMatch() {
               aria-label="คะแนนสมพงศ์"
             >
               <div
-                className="h-full rounded-full grad-pink"
+                className="h-full rounded-full grad-violet"
                 style={{ width: `${result.totalScore}%` }}
               />
             </div>
@@ -114,7 +114,7 @@ export function LoveMatch() {
                   <h3 className="font-cute text-xl text-ink">
                     <span aria-hidden>{aspect.emoji}</span> {aspect.title}
                   </h3>
-                  <span className="font-cute text-2xl text-blossom-deep">
+                  <span className="font-cute text-2xl text-lilac-deep">
                     {aspect.score}
                   </span>
                 </div>
@@ -144,7 +144,7 @@ export function LoveMatch() {
               <PersonSummary label="💜 อีกฝ่าย" birth={partner} />
             </div>
 
-            <p className="mt-3 rounded-2xl border border-dashed border-blossom-deep/40 bg-blossom/25 p-4 text-sm text-ink">
+            <p className="mt-3 rounded-2xl border border-dashed border-lilac-deep/40 bg-lilac/25 p-4 text-sm text-ink">
               <span className="font-semibold">คำแนะนำสำหรับคู่นี้ · </span>
               {result.advice}
             </p>

@@ -17,7 +17,7 @@ const CURRENT_YEAR = new Date().getFullYear();
 const YEARS = Array.from({ length: 100 }, (_, index) => CURRENT_YEAR - index);
 
 const selectClass =
-  "w-full rounded-xl border border-line bg-cream px-3 py-2.5 text-sm text-ink outline-none transition focus:border-blossom-deep focus:ring-2 focus:ring-blossom-deep/25";
+  "w-full rounded-xl border border-line bg-cream px-3 py-2.5 text-sm text-ink outline-none transition focus:border-lilac-deep focus:ring-2 focus:ring-lilac-deep/25";
 
 export function BirthDatePicker({ value, onChange, legend, idPrefix }: Props) {
   const maxDay = daysInMonth(value.month, value.year);

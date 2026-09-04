@@ -99,8 +99,8 @@ export function TarotReader() {
               disabled={isShuffling}
               className={`rounded-2xl border p-4 text-left transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-70 ${
                 spread === item.type && drawn
-                  ? "grad-sky"
-                  : "border-line bg-card text-ink hover:border-sky-deep"
+                  ? "grad-violet"
+                  : "border-line bg-card text-ink hover:border-lilac-deep"
               }`}
             >
               <p className="font-cute text-xl">{item.label}</p>
@@ -187,7 +187,7 @@ export function TarotReader() {
               type="button"
               onClick={() => startShuffle(spread)}
               disabled={isShuffling}
-              className="rounded-full border border-line px-5 py-2.5 text-sm text-ink-soft transition hover:border-sky-deep hover:text-ink disabled:cursor-not-allowed disabled:opacity-70"
+              className="rounded-full border border-line px-5 py-2.5 text-sm text-ink-soft transition hover:border-lilac-deep hover:text-ink disabled:cursor-not-allowed disabled:opacity-70"
             >
               {isShuffling ? "🔀 กำลังสับไพ่…" : "🔄 สับไพ่ใหม่"}
             </button>
@@ -232,7 +232,7 @@ export function TarotReader() {
                     <h3 className="font-cute text-2xl leading-tight text-ink">
                       {item.card.name}
                       {item.reversed && (
-                        <span className="ml-2 rounded-full bg-blossom px-2.5 py-0.5 align-middle text-xs text-ink">
+                        <span className="ml-2 rounded-full bg-lilac px-2.5 py-0.5 align-middle text-xs text-ink">
                           กลับหัว
                         </span>
                       )}
@@ -308,7 +308,7 @@ function CardFront({ drawn }: { drawn: DrawnCard }) {
       </p>
       <p className="text-[10px] text-ink-soft">{drawn.card.nameEn}</p>
       {drawn.reversed && (
-        <p className="mt-1 rounded-full bg-blossom px-2 py-0.5 text-[10px] text-ink">
+        <p className="mt-1 rounded-full bg-lilac px-2 py-0.5 text-[10px] text-ink">
           กลับหัว
         </p>
       )}

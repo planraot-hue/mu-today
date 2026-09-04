@@ -237,7 +237,7 @@ export function ChatWidget() {
           {!isOpen && (
             <span
               aria-hidden
-              className="absolute -right-0.5 -top-0.5 h-3.5 w-3.5 rounded-full border-2 border-white bg-mint-deep"
+              className="absolute -right-0.5 -top-0.5 h-3.5 w-3.5 rounded-full border-2 border-white bg-gold-deep"
             />
           )}
         </button>
@@ -316,7 +316,7 @@ export function ChatWidget() {
             {error && (
               <p
                 role="alert"
-                className="rounded-2xl bg-blossom/50 px-3 py-2 text-xs leading-relaxed text-danger"
+                className="rounded-2xl bg-lilac/50 px-3 py-2 text-xs leading-relaxed text-danger"
               >
                 {error}
               </p>

@@ -1,24 +1,37 @@
 @import "tailwindcss";
 
 @theme {
-  /* โทนพาสเทลของมูทูเดย์ */
-  --color-cream: #fff8f2;
-  --color-card: #ffffff;
-  --color-line: #f0e4ea;
-  --color-ink: #4a3b52;
-  --color-ink-soft: #8d7f97;
+  /**
+   * พาเลต 4 สี ดึงมาจากไอคอนลูกแก้วโดยตรง
+   * ครีมจันทร์ (พื้น) · ม่วงลาเวนเดอร์ (สีหลัก) · ทองมงคล (สีเน้น) · กรมท่า (ตัวหนังสือ)
+   *
+   * สีที่ไม่นับรวมใน 4 สีนี้เพราะเป็น "ข้อมูล" ไม่ใช่การตกแต่ง:
+   * - สีประจำดาวทั้งแปดใน thaksa.ts ซึ่งเป็นที่มาของสีมงคลตามตำรา ห้ามแตะ
+   * - สีประจำชุดไพ่ วัดเซียมซี และธาตุจีน ใช้แยกแยะประเภท
+   * - danger ใช้บอกสถานะผิดพลาด ต้องอ่านออกว่าเป็น error
+   */
 
-  --color-blossom: #ffd9e6;
-  --color-blossom-deep: #ff8fb1;
-  --color-lilac: #e5dcff;
-  --color-lilac-deep: #a98fee;
-  --color-mint: #d6f2e4;
-  --color-mint-deep: #66c79b;
-  --color-butter: #fff0c9;
-  --color-butter-deep: #f0b429;
-  --color-sky: #daecfb;
-  --color-sky-deep: #6fb3e8;
-  --color-danger: #d16a80;
+  /* ครีมจันทร์ + กรมท่า = พื้นและตัวหนังสือ */
+  --color-cream: #fff6f0;
+  --color-card: #ffffff;
+  --color-line: #e8e5f0;
+  --color-ink: #2e3566;
+  --color-ink-soft: #6b7194;
+
+  /* ม่วงลาเวนเดอร์ — สีหลัก ไล่จากอ่อนไปเข้ม */
+  --color-lilac: #ece3fb;
+  --color-lilac-soft: #dccff7;
+  --color-lilac-mid: #a98fee;
+  --color-lilac-deep: #7c5fd3;
+
+  /* ทองมงคล — สีเน้น */
+  --color-gold: #fbecc9;
+  --color-gold-soft: #f6e0a4;
+  --color-gold-mid: #efc15c;
+  --color-gold-deep: #9a6e06;
+
+  /* สถานะผิดพลาด ไม่นับรวมใน 4 สี */
+  --color-danger: #c2566b;
 
   --font-sans: var(--font-mali), ui-sans-serif, system-ui, sans-serif;
   --font-cute: var(--font-itim), var(--font-mali), ui-sans-serif, sans-serif;
@@ -33,57 +46,47 @@
 }
 
 body {
+  /* แสงนวลสามจุดจากสีในพาเลตเท่านั้น ไม่มีสีที่สี่ */
   background:
-    radial-gradient(1100px 520px at 12% -12%, #ffe8f2 0%, transparent 62%),
-    radial-gradient(900px 480px at 88% 4%, #e9f2ff 0%, transparent 58%),
-    radial-gradient(800px 500px at 50% 108%, #fff3d6 0%, transparent 60%),
+    radial-gradient(1100px 520px at 12% -12%, #f0e6fd 0%, transparent 62%),
+    radial-gradient(900px 480px at 88% 4%, #fdf1d8 0%, transparent 58%),
+    radial-gradient(800px 520px at 50% 108%, #ece3fb 0%, transparent 60%),
     var(--color-cream);
   background-attachment: fixed;
   color: var(--color-ink);
   -webkit-font-smoothing: antialiased;
 }
 
-/* ---------- ปุ่มเลือกประเภทแบบไล่สี ----------
-   ใช้เป็นคลาสธรรมดาแทน utility ของ Tailwind เพราะชื่อ utility ของ gradient
-   เปลี่ยนไปใน Tailwind v4 การเขียน CSS ตรงๆ จึงไม่มีความเสี่ยงพัง */
+/* ---------- ปุ่มไล่สี ----------
+   เขียนเป็นคลาสธรรมดาแทน utility ของ Tailwind เพราะชื่อ utility ของ gradient
+   เปลี่ยนไปใน Tailwind v4 การเขียน CSS ตรงๆ จึงไม่มีความเสี่ยงพัง
 
-.grad-pink,
+   เหลือสองตัวตามพาเลต: ม่วงคือสีหลัก ทองคือสีเน้น */
+
 .grad-violet,
-.grad-mint,
-.grad-sun,
-.grad-sky {
-  color: #ffffff;
+.grad-gold {
   border-color: transparent;
-  box-shadow: 0 6px 16px -8px rgba(74, 59, 82, 0.55);
-}
-
-.grad-pink {
-  background-image: linear-gradient(135deg, #ff9ec4 0%, #b98cf0 100%);
+  box-shadow: 0 6px 16px -8px rgba(46, 53, 102, 0.5);
 }
 
 .grad-violet {
-  background-image: linear-gradient(135deg, #a98fee 0%, #6fb3e8 100%);
+  background-image: linear-gradient(135deg, #a98fee 0%, #7c5fd3 100%);
+  color: #ffffff;
 }
 
-.grad-mint {
-  background-image: linear-gradient(135deg, #66c79b 0%, #6fb3e8 100%);
-}
-
-.grad-sun {
-  background-image: linear-gradient(135deg, #ffc46b 0%, #ff8fb1 100%);
-}
-
-.grad-sky {
-  background-image: linear-gradient(135deg, #6fb3e8 0%, #66c79b 100%);
+/* ทองอ่อนใช้ตัวหนังสือสีกรมท่า ถ้าใช้ขาวจะอ่านไม่ออก */
+.grad-gold {
+  background-image: linear-gradient(135deg, #f6e0a4 0%, #efc15c 100%);
+  color: var(--color-ink);
 }
 
 /* ไล่สีสำหรับพื้นหลังการ์ดผลลัพธ์ โทนอ่อนกว่าปุ่ม */
-.grad-soft-pink {
-  background-image: linear-gradient(135deg, #ffe3ef 0%, #ece4ff 100%);
+.grad-soft-violet {
+  background-image: linear-gradient(135deg, #f2ecfd 0%, #e4d9fa 100%);
 }
 
-.grad-soft-violet {
-  background-image: linear-gradient(135deg, #ece4ff 0%, #ddeeff 100%);
+.grad-soft-gold {
+  background-image: linear-gradient(135deg, #fdf4de 0%, #f8e6b6 100%);
 }
 
 /* ---------- ลูกเล่นเคลื่อนไหว ---------- */
