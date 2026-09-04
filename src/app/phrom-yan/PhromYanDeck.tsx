@@ -197,8 +197,8 @@ export function PhromYanDeck() {
             {picked.meaning}
           </p>
 
-          <p className="mt-4 rounded-2xl border border-dashed border-gold-deep/50 bg-gold/30 p-4 text-sm leading-relaxed text-ink">
-            <span className="font-semibold">คำแนะนำ · </span>
+          <p className="mt-4 rounded-2xl border border-dashed border-info-mid bg-info p-4 text-sm leading-relaxed text-ink">
+            <span className="font-semibold text-info-deep">คำแนะนำ · </span>
             {picked.advice}
           </p>
 

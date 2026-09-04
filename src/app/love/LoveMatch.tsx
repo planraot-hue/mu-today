@@ -144,8 +144,8 @@ export function LoveMatch() {
               <PersonSummary label="💜 อีกฝ่าย" birth={partner} />
             </div>
 
-            <p className="mt-3 rounded-2xl border border-dashed border-lilac-deep/40 bg-lilac/25 p-4 text-sm text-ink">
-              <span className="font-semibold">คำแนะนำสำหรับคู่นี้ · </span>
+            <p className="mt-3 rounded-2xl border border-dashed border-info-mid bg-info p-4 text-sm text-ink">
+              <span className="font-semibold text-info-deep">คำแนะนำสำหรับคู่นี้ · </span>
               {result.advice}
             </p>
 

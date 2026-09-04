@@ -30,7 +30,12 @@
   --color-gold-mid: #efc15c;
   --color-gold-deep: #9a6e06;
 
-  /* สถานะผิดพลาด ไม่นับรวมใน 4 สี */
+  /* สีบอกความหมาย ไม่นับรวมใน 4 สีของแบรนด์
+     info = กล่องคำแนะนำ ต้องอ่านออกทันทีว่าเป็นคำแนะนำ ไม่ใช่เนื้อหาทั่วไป
+     danger = สถานะผิดพลาดและสิ่งที่ตำราให้เลี่ยง */
+  --color-info: #e2effb;
+  --color-info-mid: #a9d2f2;
+  --color-info-deep: #2a6fa8;
   --color-danger: #c2566b;
 
   --font-sans: var(--font-mali), ui-sans-serif, system-ui, sans-serif;
